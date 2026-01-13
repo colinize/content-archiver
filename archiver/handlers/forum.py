@@ -273,7 +273,7 @@ def save_reddit_thread(
 ) -> None:
     """Save Reddit thread to files."""
     safe_title = sanitize_filename(f"r_{subreddit}_{title[:50]}")
-    source_folder = get_source_folder(output_dir, safe_title)
+    source_folder = get_source_folder(output_dir, safe_title, category="forums")
 
     print_info(f"Saving thread to {source_folder}")
 
@@ -593,7 +593,7 @@ def save_thread(
     """Save extracted thread to files."""
     # Create source folder
     safe_title = sanitize_filename(title)
-    source_folder = get_source_folder(output_dir, safe_title)
+    source_folder = get_source_folder(output_dir, safe_title, category="forums")
 
     print_info(f"Saving thread to {source_folder}")
 

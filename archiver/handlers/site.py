@@ -120,7 +120,7 @@ def crawl_site(
 ) -> None:
     """Crawl and save pages from a website."""
     domain = urlparse(base_url).netloc.replace('www.', '')
-    source_folder = get_source_folder(output_dir, sanitize_filename(domain))
+    source_folder = get_source_folder(output_dir, sanitize_filename(domain), category="websites")
 
     print_info(f"Archiving {len(urls)} pages to {source_folder}")
 

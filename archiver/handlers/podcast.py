@@ -289,7 +289,7 @@ def download_episodes(
     db: Database
 ) -> None:
     """Download a list of podcast episodes."""
-    source_folder = get_source_folder(output_dir, sanitize_filename(source_name))
+    source_folder = get_source_folder(output_dir, sanitize_filename(source_name), category="podcasts")
 
     print_info(f"Downloading {len(episodes)} episodes to {source_folder}")
 

@@ -70,21 +70,27 @@ archiver --status
 
 ```
 ~/Desktop/content archiver/
-├── MKBHD/                    # YouTube channel folder
-│   ├── video-title.mp4
-│   └── video-title.info.json
-├── TOPcast/                  # Podcast folder
-│   ├── index.json
-│   ├── 2024-01-15_episode-title.mp3
-│   └── ...
-├── reddit-thread-title/      # Forum thread
-│   ├── thread.md
-│   ├── thread.html
-│   └── thread.json
-└── example.com/              # Archived site
-    ├── index.json
-    ├── page-1.md
-    └── page-1.html
+├── videos/                       # YouTube content
+│   └── MKBHD/
+│       ├── video-title.mp4
+│       └── video-title.info.json
+├── podcasts/                     # Audio content
+│   └── TOPcast/
+│       ├── index.json
+│       └── episode-title.mp3
+├── forums/                       # Reddit & forum threads
+│   └── r_pinball_thread-title/
+│       ├── thread.md
+│       ├── thread.html
+│       └── images/
+├── articles/                     # Blog posts & articles
+│   └── pinballnews.com/
+│       ├── article-title.md
+│       └── images/
+└── websites/                     # Full site archives
+    └── example.com/
+        ├── index.json
+        └── page-1.md
 ```
 
 ## Site Crawling with Firecrawl

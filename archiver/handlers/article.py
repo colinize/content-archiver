@@ -256,7 +256,7 @@ def save_article(
     # Create source folder based on domain
     domain = urlparse(url).netloc.replace('www.', '')
     safe_title = sanitize_filename(title)
-    source_folder = get_source_folder(output_dir, domain)
+    source_folder = get_source_folder(output_dir, domain, category="articles")
 
     print_info(f"Saving article to {source_folder}")
 

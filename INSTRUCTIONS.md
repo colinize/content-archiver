@@ -195,13 +195,25 @@ All content is saved to:
 ~/Desktop/content archiver/
 ```
 
-Each source gets its own folder:
+Content is organized by type, then by source:
 ```
 ~/Desktop/content archiver/
-├── MKBHD/                          # YouTube channel
-├── TOPcast/                        # Podcast
-├── r_pinball_thread_title/         # Reddit thread
-├── pinballnews.com/                # Article source
+├── videos/                         # YouTube videos
+│   └── MKBHD/                      # Channel name
+│       └── video-title.mp4
+├── podcasts/                       # Audio content
+│   └── TOPcast/                    # Podcast name
+│       └── episode-title.mp3
+├── forums/                         # Reddit & forum threads
+│   └── r_pinball_thread_title/     # Thread name
+│       ├── thread.md
+│       └── images/
+├── articles/                       # Blog posts & articles
+│   └── pinballnews.com/            # Site domain
+│       └── article-title.md
+├── websites/                       # Full site archives
+│   └── example.com/
+│       └── page-1.md
 └── .archiver/                      # Tool data (database)
     └── archive.db
 ```

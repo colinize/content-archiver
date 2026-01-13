@@ -92,10 +92,20 @@ def download_file(
         return False
 
 
-def get_source_folder(output_dir: Path, source_name: str) -> Path:
-    """Get or create a folder for the source."""
+def get_source_folder(output_dir: Path, source_name: str, category: str = None) -> Path:
+    """
+    Get or create a folder for the source.
+
+    Structure: output_dir / category / source_name
+    Categories: videos, podcasts, forums, articles, websites
+    """
     safe_name = sanitize_filename(source_name)
-    folder = output_dir / safe_name
+
+    if category:
+        folder = output_dir / category / safe_name
+    else:
+        folder = output_dir / safe_name
+
     folder.mkdir(parents=True, exist_ok=True)
     return folder
 

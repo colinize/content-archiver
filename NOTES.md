@@ -173,6 +173,7 @@ pip install -e .
 
 ## File Structure
 
+### Project Files
 ```
 content archiver/
 ├── archiver/
@@ -194,8 +195,26 @@ content archiver/
 │       └── __init__.py
 ├── pyproject.toml
 ├── README.md
+├── INSTRUCTIONS.md         # User guide
 ├── NOTES.md                # This file
 └── .gitignore
+```
+
+### Archive Output Structure
+```
+~/Desktop/content archiver/
+├── videos/                 # YouTube videos, playlists, channels
+│   └── {channel-name}/
+├── podcasts/               # Podcast episodes
+│   └── {podcast-name}/
+├── forums/                 # Reddit threads, forum discussions
+│   └── {thread-title}/
+├── articles/               # Blog posts, news articles
+│   └── {site-domain}/
+├── websites/               # Full site crawls
+│   └── {domain}/
+└── .archiver/
+    └── archive.db          # SQLite tracking database
 ```
 
 ---
@@ -218,6 +237,9 @@ content archiver/
 - Tested Reddit thread - discovered JavaScript rendering issue
 - Implemented Reddit JSON API handler for thread extraction
 - Successfully archived Reddit thread with 59 posts and 2 images
+- Tested article handler with pinballnews.com - successfully extracted article with 4 images
+- Added INSTRUCTIONS.md with comprehensive user guide
+- Reorganized folder structure: Archive → videos/podcasts/forums/articles/websites → source → files
 
 ---
 

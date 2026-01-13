@@ -62,7 +62,7 @@ def download_video(url: str, output_dir: Path, db: Database) -> None:
         console.print(f"Duration: {duration // 60}:{duration % 60:02d}")
 
         # Create output folder
-        source_folder = get_source_folder(output_dir, channel)
+        source_folder = get_source_folder(output_dir, channel, category="videos")
         safe_title = sanitize_filename(title)
 
         # Track in database
@@ -159,7 +159,7 @@ def download_playlist(url: str, output_dir: Path, db: Database) -> None:
             items = [items[i] for i in indices]
 
         # Create output folder
-        source_folder = get_source_folder(output_dir, sanitize_filename(playlist_title))
+        source_folder = get_source_folder(output_dir, sanitize_filename(playlist_title), category="videos")
 
         # Download each video
         print_info(f"Downloading {len(items)} videos...")
@@ -254,7 +254,7 @@ def download_channel(url: str, output_dir: Path, db: Database) -> None:
             items = [items[i] for i in indices]
 
         # Create output folder
-        source_folder = get_source_folder(output_dir, sanitize_filename(channel_name))
+        source_folder = get_source_folder(output_dir, sanitize_filename(channel_name), category="videos")
 
         # Download each video
         print_info(f"Downloading {len(items)} videos...")
