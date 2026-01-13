@@ -65,6 +65,11 @@ def handle_forum(url: str, output_dir: Path, db: Database) -> None:
         forum_type = detect_forum_type(url)
         print_info(f"Forum type: {forum_type}")
 
+        # Reddit needs special handling via JSON API
+        if forum_type == 'reddit':
+            handle_reddit_thread(url, output_dir, db)
+            return
+
         # Fetch all pages
         all_posts = []
         current_url = url
@@ -130,6 +135,344 @@ def detect_forum_type(url: str) -> str:
         return 'vbulletin'
     else:
         return 'generic'
+
+
+def handle_reddit_thread(url: str, output_dir: Path, db: Database) -> None:
+    """Handle Reddit threads using the JSON API."""
+    print_info("Fetching Reddit thread via API...")
+
+    try:
+        # Convert URL to JSON endpoint
+        # Remove trailing slash and add .json
+        json_url = url.rstrip('/') + '.json'
+
+        response = requests.get(json_url, timeout=30, headers={
+            'User-Agent': 'ContentArchiver/1.0'
+        })
+        response.raise_for_status()
+
+        data = response.json()
+
+        # Reddit returns [post_data, comments_data]
+        if not isinstance(data, list) or len(data) < 2:
+            print_error("Unexpected Reddit API response format")
+            return
+
+        # Extract post info
+        post_data = data[0]['data']['children'][0]['data']
+        title = post_data.get('title', 'Unknown Thread')
+        author = post_data.get('author', 'Unknown')
+        selftext = post_data.get('selftext', '')
+        created_utc = post_data.get('created_utc', 0)
+        subreddit = post_data.get('subreddit', 'reddit')
+        score = post_data.get('score', 0)
+        post_url = post_data.get('url', '')
+
+        # Format date
+        post_date = datetime.fromtimestamp(created_utc).strftime('%Y-%m-%d %H:%M') if created_utc else ''
+
+        # Build posts list starting with the OP
+        posts = [{
+            'index': 0,
+            'author': author,
+            'date': post_date,
+            'content': selftext or f"[Link post: {post_url}]",
+            'content_html': selftext,
+            'images': extract_reddit_images(post_data),
+            'score': score,
+            'is_op': True,
+        }]
+
+        # Extract comments
+        comments_data = data[1]['data']['children']
+        comment_index = 1
+
+        def extract_comments(comments, depth=0):
+            nonlocal comment_index
+            for comment in comments:
+                if comment.get('kind') != 't1':  # t1 = comment
+                    continue
+
+                c_data = comment.get('data', {})
+                c_author = c_data.get('author', '[deleted]')
+                c_body = c_data.get('body', '')
+                c_created = c_data.get('created_utc', 0)
+                c_score = c_data.get('score', 0)
+
+                if c_body and c_author != '[deleted]':
+                    c_date = datetime.fromtimestamp(c_created).strftime('%Y-%m-%d %H:%M') if c_created else ''
+
+                    posts.append({
+                        'index': comment_index,
+                        'author': c_author,
+                        'date': c_date,
+                        'content': c_body,
+                        'content_html': c_body,
+                        'images': [],
+                        'score': c_score,
+                        'depth': depth,
+                    })
+                    comment_index += 1
+
+                # Recursively get replies
+                replies = c_data.get('replies')
+                if isinstance(replies, dict):
+                    reply_children = replies.get('data', {}).get('children', [])
+                    extract_comments(reply_children, depth + 1)
+
+        extract_comments(comments_data)
+
+        print_info(f"Found {len(posts)} posts (1 OP + {len(posts) - 1} comments)")
+
+        # Save the thread
+        save_reddit_thread(posts, title, subreddit, url, output_dir, db)
+
+    except Exception as e:
+        print_error(f"Failed to fetch Reddit thread: {e}")
+
+
+def extract_reddit_images(post_data: dict) -> list:
+    """Extract image URLs from Reddit post data."""
+    images = []
+
+    # Check for direct image URL
+    url = post_data.get('url', '')
+    if any(ext in url.lower() for ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']):
+        images.append(url)
+
+    # Check for gallery
+    if post_data.get('is_gallery'):
+        media_metadata = post_data.get('media_metadata', {})
+        for item_id, item_data in media_metadata.items():
+            if item_data.get('status') == 'valid':
+                # Get the highest resolution image
+                if 's' in item_data:
+                    img_url = item_data['s'].get('u', '').replace('&amp;', '&')
+                    if img_url:
+                        images.append(img_url)
+
+    # Check for preview images
+    preview = post_data.get('preview', {})
+    if preview and 'images' in preview:
+        for img in preview['images']:
+            source = img.get('source', {})
+            img_url = source.get('url', '').replace('&amp;', '&')
+            if img_url:
+                images.append(img_url)
+
+    return images
+
+
+def save_reddit_thread(
+    posts: List[Dict],
+    title: str,
+    subreddit: str,
+    url: str,
+    output_dir: Path,
+    db: Database
+) -> None:
+    """Save Reddit thread to files."""
+    safe_title = sanitize_filename(f"r_{subreddit}_{title[:50]}")
+    source_folder = get_source_folder(output_dir, safe_title)
+
+    print_info(f"Saving thread to {source_folder}")
+
+    # Track in database
+    dl_id = db.add_download(
+        url=url,
+        content_type="forum",
+        source_name=f"r/{subreddit}",
+        title=title,
+        metadata={"post_count": len(posts), "subreddit": subreddit}
+    )
+
+    try:
+        db.update_status(dl_id, "downloading")
+
+        # Save as JSON
+        json_path = source_folder / "thread.json"
+        thread_data = {
+            "title": title,
+            "subreddit": subreddit,
+            "url": url,
+            "extracted_at": datetime.now().isoformat(),
+            "post_count": len(posts),
+            "posts": posts,
+        }
+        json_path.write_text(json.dumps(thread_data, indent=2, ensure_ascii=False))
+
+        # Save as Markdown
+        md_path = source_folder / "thread.md"
+        md_content = generate_reddit_markdown(title, subreddit, url, posts)
+        md_path.write_text(md_content, encoding='utf-8')
+
+        # Save as HTML
+        html_path = source_folder / "thread.html"
+        html_content = generate_reddit_html(title, subreddit, url, posts)
+        html_path.write_text(html_content, encoding='utf-8')
+
+        # Download images from OP
+        image_count = 0
+        if posts and posts[0].get('images'):
+            image_count = download_thread_images(posts[:1], source_folder, url)
+
+        db.update_status(dl_id, "complete", str(md_path))
+        print_success(f"Saved thread: {title}")
+        print_info(f"  - {len(posts)} posts ({len(posts) - 1} comments)")
+        if image_count:
+            print_info(f"  - {image_count} images")
+        print_info(f"  - Files: thread.md, thread.html, thread.json")
+
+    except Exception as e:
+        db.update_status(dl_id, "error", error_message=str(e))
+        print_error(f"Error saving thread: {e}")
+
+
+def generate_reddit_markdown(title: str, subreddit: str, url: str, posts: List[Dict]) -> str:
+    """Generate Markdown for Reddit thread."""
+    lines = [
+        f"# {title}",
+        f"",
+        f"**Subreddit:** r/{subreddit}",
+        f"**Source:** {url}",
+        f"**Comments:** {len(posts) - 1}",
+        f"",
+        "---",
+        "",
+    ]
+
+    for post in posts:
+        if post.get('is_op'):
+            lines.append(f"## Original Post by u/{post['author']}")
+            lines.append(f"*{post['date']}* | Score: {post.get('score', 0)}")
+        else:
+            indent = "  " * post.get('depth', 0)
+            lines.append(f"{indent}### u/{post['author']}")
+            lines.append(f"{indent}*{post['date']}* | Score: {post.get('score', 0)}")
+
+        lines.append("")
+        # Indent content for nested comments
+        content = post['content']
+        if post.get('depth', 0) > 0:
+            content = '\n'.join('  ' * post['depth'] + line for line in content.split('\n'))
+        lines.append(content)
+
+        if post.get('images'):
+            lines.append("")
+            for img in post['images']:
+                lines.append(f"![image]({img})")
+
+        lines.append("")
+        lines.append("---")
+        lines.append("")
+
+    return '\n'.join(lines)
+
+
+def generate_reddit_html(title: str, subreddit: str, url: str, posts: List[Dict]) -> str:
+    """Generate styled HTML for Reddit thread."""
+    html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title} - r/{subreddit}</title>
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            color: #1a1a1b;
+            background: #dae0e6;
+        }}
+        .thread {{
+            background: white;
+            border-radius: 4px;
+            padding: 20px;
+        }}
+        h1 {{
+            font-size: 1.5em;
+            margin-bottom: 0.5em;
+        }}
+        .meta {{
+            color: #7c7c7c;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }}
+        .meta a {{
+            color: #0079d3;
+        }}
+        .post {{
+            border-left: 3px solid #ccc;
+            padding: 10px 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+        }}
+        .post.op {{
+            border-left-color: #0079d3;
+            background: #f0f7ff;
+        }}
+        .post-header {{
+            font-size: 0.85em;
+            color: #7c7c7c;
+            margin-bottom: 8px;
+        }}
+        .author {{
+            color: #1a1a1b;
+            font-weight: 500;
+        }}
+        .score {{
+            color: #ff4500;
+        }}
+        .content {{
+            white-space: pre-wrap;
+        }}
+        .images img {{
+            max-width: 100%;
+            margin-top: 10px;
+            border-radius: 4px;
+        }}
+        .depth-1 {{ margin-left: 20px; }}
+        .depth-2 {{ margin-left: 40px; }}
+        .depth-3 {{ margin-left: 60px; }}
+        .depth-4 {{ margin-left: 80px; }}
+    </style>
+</head>
+<body>
+    <div class="thread">
+        <h1>{title}</h1>
+        <div class="meta">
+            <strong>r/{subreddit}</strong> |
+            <a href="{url}">Original Thread</a> |
+            {len(posts) - 1} comments
+        </div>
+"""
+
+    for post in posts:
+        depth_class = f"depth-{min(post.get('depth', 0), 4)}" if not post.get('is_op') else ''
+        op_class = 'op' if post.get('is_op') else ''
+        images_html = ''.join(f'<img src="{img}" alt="image">' for img in post.get('images', []))
+
+        html += f"""
+        <div class="post {op_class} {depth_class}">
+            <div class="post-header">
+                <span class="author">u/{post['author']}</span> |
+                <span class="date">{post['date']}</span> |
+                <span class="score">{post.get('score', 0)} points</span>
+            </div>
+            <div class="content">{post['content']}</div>
+            <div class="images">{images_html}</div>
+        </div>
+"""
+
+    html += """
+    </div>
+</body>
+</html>
+"""
+    return html
 
 
 def extract_thread_title(soup: BeautifulSoup, url: str) -> str:

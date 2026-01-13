@@ -62,6 +62,16 @@ pip install -e .
 - If not available: falls back to single format (no merging needed), shows warning
 - Works for single videos, playlists, and channels
 
+### 5. Reddit thread extraction returns no posts
+**Problem**: Generic forum scraper couldn't extract Reddit threads - returned "No posts could be extracted"
+**Cause**: Reddit's modern site uses JavaScript to render content, BeautifulSoup only sees empty HTML
+**Solution**: Implemented Reddit-specific handler using JSON API in `forum.py`:
+- Appends `.json` to thread URL to get structured data
+- Recursive comment extraction with depth tracking
+- Extracts images from galleries and preview URLs
+- Reddit-specific markdown/HTML formatting with nested reply indentation
+- Successfully extracted 59 posts with images from test thread
+
 ---
 
 ## Features Implemented
@@ -84,8 +94,10 @@ pip install -e .
 
 ### Forum Handler (`handlers/forum.py`)
 - Multi-platform support: Reddit, Discourse, phpBB, vBulletin, generic
-- Automatic pagination following
-- Post extraction: author, date, content, images
+- **Reddit JSON API** - bypasses JavaScript rendering, extracts via API
+- Recursive comment extraction with reply depth tracking
+- Automatic pagination following for non-Reddit forums
+- Post extraction: author, date, content, score, images
 - Output: thread.md, thread.html, thread.json
 - Image downloading to `images/` subfolder
 
@@ -203,6 +215,9 @@ content archiver/
 - Added ffmpeg fallback to youtube.py for environments without ffmpeg
 - Added CLAUDE.md instruction to auto-update NOTES.md each session
 - Successfully downloaded 1.6GB YouTube video without ffmpeg
+- Tested Reddit thread - discovered JavaScript rendering issue
+- Implemented Reddit JSON API handler for thread extraction
+- Successfully archived Reddit thread with 59 posts and 2 images
 
 ---
 
