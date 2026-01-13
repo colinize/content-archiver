@@ -54,6 +54,14 @@ source venv/bin/activate
 pip install -e .
 ```
 
+### 4. YouTube download fails without ffmpeg
+**Problem**: yt-dlp requires ffmpeg to merge separate video+audio streams, fails with error
+**Solution**: Added ffmpeg detection in `youtube.py`:
+- Checks if ffmpeg is available via `shutil.which('ffmpeg')`
+- If available: uses best video+audio format with merging
+- If not available: falls back to single format (no merging needed), shows warning
+- Works for single videos, playlists, and channels
+
 ---
 
 ## Features Implemented
@@ -64,6 +72,7 @@ pip install -e .
 - Channel video listing (up to 100 videos)
 - Progress bars via yt-dlp hooks
 - Saves thumbnails and info.json
+- **ffmpeg fallback**: Works without ffmpeg installed (uses single format)
 
 ### Podcast Handler (`handlers/podcast.py`)
 - RSS feed parsing with feedparser
@@ -188,6 +197,13 @@ content archiver/
 - Added indirect audio link resolution
 - Pushed to GitHub: https://github.com/colinize/content-archiver
 
+### Session 2 - Testing & Fixes (Jan 13, 2025)
+- Tested podcast handler with pinrepair.com - successfully found 50 episodes
+- Tested YouTube handler - discovered ffmpeg requirement
+- Added ffmpeg fallback to youtube.py for environments without ffmpeg
+- Added CLAUDE.md instruction to auto-update NOTES.md each session
+- Successfully downloaded 1.6GB YouTube video without ffmpeg
+
 ---
 
-*Last updated: January 2025*
+*Last updated: January 13, 2025*
