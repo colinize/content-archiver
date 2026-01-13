@@ -258,7 +258,11 @@ def save_article(
     safe_title = sanitize_filename(title)
     source_folder = get_source_folder(output_dir, domain, category="articles")
 
-    print_info(f"Saving article to {source_folder}")
+    # Create article-specific subfolder
+    article_folder = source_folder / safe_title
+    article_folder.mkdir(parents=True, exist_ok=True)
+
+    print_info(f"Saving article to {article_folder}")
 
     # Track in database
     dl_id = db.add_download(
@@ -273,7 +277,7 @@ def save_article(
         db.update_status(dl_id, "downloading")
 
         # Save as Markdown
-        md_path = source_folder / f"{safe_title}.md"
+        md_path = article_folder / "article.md"
         md_content = f"""# {title}
 
 Source: {url}
@@ -291,12 +295,12 @@ Source: {url}
         md_path.write_text(md_content, encoding='utf-8')
 
         # Save as styled HTML
-        html_path = source_folder / f"{safe_title}.html"
+        html_path = article_folder / "article.html"
         styled_html = generate_styled_html(title, url, content_html, metadata)
         html_path.write_text(styled_html, encoding='utf-8')
 
         # Save metadata as JSON
-        json_path = source_folder / f"{safe_title}.json"
+        json_path = article_folder / "article.json"
         article_data = {
             'title': title,
             'url': url,
@@ -306,12 +310,12 @@ Source: {url}
         }
         json_path.write_text(json.dumps(article_data, indent=2, ensure_ascii=False))
 
-        # Download images
-        image_count = download_article_images(images, source_folder, safe_title)
+        # Download images to article folder
+        image_count = download_article_images(images, article_folder)
 
         db.update_status(dl_id, "complete", str(md_path))
         print_success(f"Saved article: {title}")
-        print_info(f"  - Files: {safe_title}.md, .html, .json")
+        print_info(f"  - Files: article.md, .html, .json")
         if image_count:
             print_info(f"  - {image_count} images downloaded")
 
@@ -401,7 +405,7 @@ def generate_styled_html(title: str, url: str, content: str, metadata: dict) -> 
 """
 
 
-def download_article_images(images: list, folder: Path, article_name: str) -> int:
+def download_article_images(images: list, folder: Path) -> int:
     """Download images from article."""
     if not images:
         return 0
@@ -420,11 +424,11 @@ def download_article_images(images: list, folder: Path, article_name: str) -> in
             if not images_folder.exists():
                 images_folder.mkdir(parents=True)
 
-            # Generate filename
+            # Generate filename (simple numbering since we're in article-specific folder)
             ext = Path(urlparse(img['url']).path).suffix or '.jpg'
             if ext.lower() not in ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg']:
                 ext = '.jpg'
-            filepath = images_folder / f"{article_name}_{i}{ext}"
+            filepath = images_folder / f"{i}{ext}"
 
             filepath.write_bytes(response.content)
             downloaded += 1
