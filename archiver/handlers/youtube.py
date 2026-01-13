@@ -1,6 +1,7 @@
 """YouTube handler using yt-dlp."""
 
 import json
+import shutil
 from pathlib import Path
 from typing import Optional
 
@@ -77,19 +78,43 @@ def download_video(url: str, output_dir: Path, db: Database) -> None:
         print_info("Downloading...")
         db.update_status(dl_id, "downloading")
 
-        ydl_opts = {
-            'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
-            'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-            'writethumbnail': True,
-            'writeinfojson': True,
-            'merge_output_format': 'mp4',
-            'progress_hooks': [_make_progress_hook()],
-        }
+        # Check if ffmpeg is available
+        has_ffmpeg = shutil.which('ffmpeg') is not None
+
+        if has_ffmpeg:
+            # Best quality with merging
+            ydl_opts = {
+                'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'writethumbnail': True,
+                'writeinfojson': True,
+                'merge_output_format': 'mp4',
+                'progress_hooks': [_make_progress_hook()],
+            }
+            output_ext = 'mp4'
+        else:
+            # Fallback: single format that doesn't need merging
+            print_warning("ffmpeg not found - downloading single format (install ffmpeg for best quality)")
+            ydl_opts = {
+                'format': 'best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'writethumbnail': True,
+                'writeinfojson': True,
+                'progress_hooks': [_make_progress_hook()],
+            }
+            output_ext = 'webm'  # Usually webm without merging
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
-        db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.mp4'))
+        # Find the actual downloaded file
+        for ext in ['mp4', 'webm', 'mkv']:
+            potential_file = source_folder / f'{safe_title}.{ext}'
+            if potential_file.exists():
+                db.update_status(dl_id, "complete", str(potential_file))
+                break
+        else:
+            db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{output_ext}'))
         print_success(f"Downloaded: {title}")
 
     except Exception as e:
@@ -156,18 +181,31 @@ def download_playlist(url: str, output_dir: Path, db: Database) -> None:
                 db.update_status(dl_id, "downloading")
                 safe_title = sanitize_filename(f"{i:03d}_{title}")
 
-                ydl_opts = {
-                    'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
-                    'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                    'merge_output_format': 'mp4',
-                    'quiet': True,
-                    'no_warnings': True,
-                }
+                has_ffmpeg = shutil.which('ffmpeg') is not None
+                if has_ffmpeg:
+                    ydl_opts = {
+                        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                        'merge_output_format': 'mp4',
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
+                else:
+                    ydl_opts = {
+                        'format': 'best[height<=1080]/best',
+                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([video_url])
 
-                db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.mp4'))
+                # Find actual file
+                for ext in ['mp4', 'webm', 'mkv']:
+                    if (source_folder / f'{safe_title}.{ext}').exists():
+                        db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
+                        break
                 print_success(f"Downloaded: {title}")
 
             except Exception as e:
@@ -238,18 +276,31 @@ def download_channel(url: str, output_dir: Path, db: Database) -> None:
                 db.update_status(dl_id, "downloading")
                 safe_title = sanitize_filename(title)
 
-                ydl_opts = {
-                    'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
-                    'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                    'merge_output_format': 'mp4',
-                    'quiet': True,
-                    'no_warnings': True,
-                }
+                has_ffmpeg = shutil.which('ffmpeg') is not None
+                if has_ffmpeg:
+                    ydl_opts = {
+                        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                        'merge_output_format': 'mp4',
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
+                else:
+                    ydl_opts = {
+                        'format': 'best[height<=1080]/best',
+                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                        'quiet': True,
+                        'no_warnings': True,
+                    }
 
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([video_url])
 
-                db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.mp4'))
+                # Find actual file
+                for ext in ['mp4', 'webm', 'mkv']:
+                    if (source_folder / f'{safe_title}.{ext}').exists():
+                        db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
+                        break
                 print_success(f"Downloaded: {title}")
 
             except Exception as e:
