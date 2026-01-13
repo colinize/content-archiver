@@ -6,7 +6,7 @@ A simple CLI tool to archive content from the internet. Just run `archiver "URL"
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/content-archiver.git
+git clone https://github.com/colinize/content-archiver.git
 cd content-archiver
 
 # Create virtual environment
