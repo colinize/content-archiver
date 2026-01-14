@@ -119,7 +119,8 @@ pip install -e .
 ## Ideas & Future Enhancements
 
 ### Discussed but not yet implemented:
-- [ ] `--batch` flag fully tested with URL file input
+- [x] `--batch` flag fully tested with URL file input ✅ (Session 3)
+- [x] `--yes` / `-y` flag for auto-confirm in batch mode ✅ (Session 3)
 - [ ] `--resume` flag for interrupted downloads
 - [ ] `--status` flag to show download history
 
@@ -241,6 +242,81 @@ content archiver/
 - Added INSTRUCTIONS.md with comprehensive user guide
 - Reorganized folder structure: Archive → videos/podcasts/forums/articles/websites → source → files
 
+### Session 3 - Batch Processing & Bug Fixes (Jan 13-14, 2025)
+
+#### Bug Fixes
+1. **auto_confirm not propagating through handlers**
+   - Problem: Batch mode caused EOF errors when podcast/audio prompts appeared
+   - Fixed: `handle_platform_url()` in podcast.py now accepts and passes `auto_confirm`
+   - Fixed: `handle_article()` now accepts `auto_confirm` and passes to `handle_audio_webpage()`
+   - Fixed: CLI passes `auto_confirm` to article handler and fallback case
+
+2. **Installed ffmpeg via Homebrew**
+   - Required for SoundCloud MP3 conversion from m4a
+   - `brew install ffmpeg`
+
+#### New Features
+1. **Site handler exclude_paths parameter**
+   - Added `exclude_paths` parameter to `handle_site()`
+   - Filters out URLs matching patterns (e.g., `/topcast/`)
+   - Used for pinrepair.com to skip already-downloaded podcast section
+
+#### Content Archived This Session
+
+**Podcasts (1,408 episodes total):**
+| Source | Episodes |
+|--------|----------|
+| Special When Lit | 98 |
+| The Pinball Show (Pinball Network) | 200 |
+| Head2Head Pinball | 101 |
+| Wedgehead Pinball Podcast | 110 |
+| Silverball Chronicles | 50 |
+| SoundCloud kanedapinball | 799 |
+| Pinball News audio files (retry batch) | ~50 |
+
+**Articles:**
+| Source | Count |
+|--------|-------|
+| Pinball News (batch of 1,643 URLs) | 538 articles |
+| Polygon - Big Bang Bar history | 1 |
+| Wayback Machine - Steve Ritchie IRC Interview | 1 |
+
+**Websites:**
+| Source | Pages |
+|--------|-------|
+| pinrepair.com (excluding /topcast/) | 100 |
+| pinwiki.com | 100 |
+
+#### Batch Processing
+- Tested batch mode with 1,643 Pinball News URLs
+- Fixed comment line handling (skip lines starting with #)
+- Auto-confirm enabled for all batch operations
+- Created retry mechanism for failed URLs
+
+### Session 4 - YouTube Playlist Fix (Jan 14, 2025)
+
+#### Bug Fixes
+1. **YouTube playlist URLs with `?list=` not detected as playlists**
+   - Problem: URLs like `youtube.com/watch?v=XXX&list=YYY` were detected as "video" instead of "playlist"
+   - Root cause: `detect_youtube_type()` only checked for "playlist" string, not `list=` query param
+   - Fix: Added `'list=' in url_lower` check to `detector.py:109`
+
+2. **Playlist extraction returning 0 entries for video+list URLs**
+   - Problem: yt-dlp's `extract_flat=True` returns empty entries for video URLs with list param
+   - Fix: `download_playlist()` now extracts playlist ID and constructs proper playlist URL (`youtube.com/playlist?list=ID`)
+
+3. **yt-dlp requires JavaScript runtime (deno) for YouTube**
+   - Problem: YouTube now requires JS challenges to be solved, yt-dlp needs deno
+   - Warning shown: "No supported JavaScript runtime could be found"
+   - Fix: Installed deno via `brew install deno`
+   - Also installed `yt-dlp[default]` from GitHub master for `yt-dlp-ejs` support
+
+#### Content Archived This Session
+**YouTube Playlists:**
+| Source | Videos |
+|--------|--------|
+| Pinball Expo 2025 (Pinball News) | 46 |
+
 ---
 
-*Last updated: January 13, 2025*
+*Last updated: January 14, 2025*

@@ -26,7 +26,7 @@ from ..core.progress import (
 )
 
 
-def handle_youtube(url: str, output_dir: Path, db: Database) -> None:
+def handle_youtube(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Handle YouTube URLs (videos, playlists, channels)."""
     if yt_dlp is None:
         print_error("yt-dlp is not installed. Please run: pip install yt-dlp")
@@ -38,9 +38,9 @@ def handle_youtube(url: str, output_dir: Path, db: Database) -> None:
     if youtube_type == "video":
         download_video(url, output_dir, db)
     elif youtube_type == "playlist":
-        download_playlist(url, output_dir, db)
+        download_playlist(url, output_dir, db, auto_confirm=auto_confirm)
     elif youtube_type == "channel":
-        download_channel(url, output_dir, db)
+        download_channel(url, output_dir, db, auto_confirm=auto_confirm)
 
 
 def download_video(url: str, output_dir: Path, db: Database) -> None:
@@ -123,14 +123,25 @@ def download_video(url: str, output_dir: Path, db: Database) -> None:
             db.update_status(dl_id, "error", error_message=str(e))
 
 
-def download_playlist(url: str, output_dir: Path, db: Database) -> None:
+def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Download a YouTube playlist."""
     print_info("Fetching playlist info...")
 
     try:
+        # Convert video+list URL to playlist-only URL for proper extraction
+        import re
+        from urllib.parse import urlparse, parse_qs
+        parsed = urlparse(url)
+        query = parse_qs(parsed.query)
+        if 'list' in query:
+            playlist_id = query['list'][0]
+            playlist_url = f"https://www.youtube.com/playlist?list={playlist_id}"
+        else:
+            playlist_url = url
+
         # Get playlist info
         with yt_dlp.YoutubeDL({'quiet': True, 'extract_flat': True}) as ydl:
-            info = ydl.extract_info(url, download=False)
+            info = ydl.extract_info(playlist_url, download=False)
 
         playlist_title = info.get('title', 'Unknown Playlist')
         entries = info.get('entries', [])
@@ -148,15 +159,18 @@ def download_playlist(url: str, output_dir: Path, db: Database) -> None:
         # Show found items
         show_found_items("YouTube Playlist", playlist_title, items, "videos")
 
-        # Confirm
-        choice = confirm_download(len(items), "videos")
-        if choice == "none":
-            print_info("Download cancelled.")
-            return
+        # Confirm (skip if auto_confirm)
+        if auto_confirm:
+            choice = "all"
+        else:
+            choice = confirm_download(len(items), "videos")
+            if choice == "none":
+                print_info("Download cancelled.")
+                return
 
-        if choice == "select":
-            indices = select_items(items)
-            items = [items[i] for i in indices]
+            if choice == "select":
+                indices = select_items(items)
+                items = [items[i] for i in indices]
 
         # Create output folder
         source_folder = get_source_folder(output_dir, sanitize_filename(playlist_title), category="videos")
@@ -218,7 +232,7 @@ def download_playlist(url: str, output_dir: Path, db: Database) -> None:
         print_error(f"Failed to process playlist: {e}")
 
 
-def download_channel(url: str, output_dir: Path, db: Database) -> None:
+def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Download videos from a YouTube channel."""
     print_info("Fetching channel info...")
 
@@ -243,15 +257,18 @@ def download_channel(url: str, output_dir: Path, db: Database) -> None:
         # Show found items
         show_found_items("YouTube Channel", channel_name, items, "videos")
 
-        # Confirm
-        choice = confirm_download(len(items), "videos")
-        if choice == "none":
-            print_info("Download cancelled.")
-            return
+        # Confirm (skip if auto_confirm)
+        if auto_confirm:
+            choice = "all"
+        else:
+            choice = confirm_download(len(items), "videos")
+            if choice == "none":
+                print_info("Download cancelled.")
+                return
 
-        if choice == "select":
-            indices = select_items(items)
-            items = [items[i] for i in indices]
+            if choice == "select":
+                indices = select_items(items)
+                items = [items[i] for i in indices]
 
         # Create output folder
         source_folder = get_source_folder(output_dir, sanitize_filename(channel_name), category="videos")

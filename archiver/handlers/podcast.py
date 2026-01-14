@@ -98,20 +98,20 @@ def resolve_indirect_audio_links(potential_links: list, max_check: int = 50) -> 
     return {url for url, _ in resolved}
 
 
-def handle_podcast(url: str, output_dir: Path, db: Database) -> None:
+def handle_podcast(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Handle podcast URLs (RSS feeds, platforms, webpages)."""
     podcast_type = detect_podcast_type(url)
     print_info(f"Podcast type: {podcast_type}")
 
     if podcast_type == "rss":
-        handle_rss_feed(url, output_dir, db)
+        handle_rss_feed(url, output_dir, db, auto_confirm=auto_confirm)
     elif podcast_type == "platform":
-        handle_platform_url(url, output_dir, db)
+        handle_platform_url(url, output_dir, db, auto_confirm=auto_confirm)
     else:  # webpage
-        handle_audio_webpage(url, output_dir, db)
+        handle_audio_webpage(url, output_dir, db, auto_confirm=auto_confirm)
 
 
-def handle_rss_feed(url: str, output_dir: Path, db: Database) -> None:
+def handle_rss_feed(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Handle a podcast RSS feed."""
     print_info("Fetching RSS feed...")
 
@@ -165,15 +165,18 @@ def handle_rss_feed(url: str, output_dir: Path, db: Database) -> None:
         # Show found episodes
         show_found_items("Podcast", podcast_title, episodes, "episodes")
 
-        # Confirm download
-        choice = confirm_download(len(episodes), "episodes")
-        if choice == "none":
-            print_info("Download cancelled.")
-            return
+        # Confirm download (skip if auto_confirm)
+        if auto_confirm:
+            choice = "all"
+        else:
+            choice = confirm_download(len(episodes), "episodes")
+            if choice == "none":
+                print_info("Download cancelled.")
+                return
 
-        if choice == "select":
-            indices = select_items(episodes)
-            episodes = [episodes[i] for i in indices]
+            if choice == "select":
+                indices = select_items(episodes)
+                episodes = [episodes[i] for i in indices]
 
         # Download episodes
         download_episodes(episodes, podcast_title, output_dir, db)
@@ -182,14 +185,14 @@ def handle_rss_feed(url: str, output_dir: Path, db: Database) -> None:
         print_error(f"Failed to process RSS feed: {e}")
 
 
-def handle_platform_url(url: str, output_dir: Path, db: Database) -> None:
+def handle_platform_url(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Handle podcast platform URLs (Spotify, Apple, etc.)."""
     # For now, try to find an RSS feed or audio links on the page
     print_warning("Platform URL detected. Attempting to find audio files...")
-    handle_audio_webpage(url, output_dir, db)
+    handle_audio_webpage(url, output_dir, db, auto_confirm=auto_confirm)
 
 
-def handle_audio_webpage(url: str, output_dir: Path, db: Database) -> None:
+def handle_audio_webpage(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Scan a webpage for audio file links, including indirect links."""
     print_info("Scanning page for audio files...")
 
@@ -265,15 +268,18 @@ def handle_audio_webpage(url: str, output_dir: Path, db: Database) -> None:
         # Show found episodes
         show_found_items("Audio Files", page_title, episodes, "audio files")
 
-        # Confirm download
-        choice = confirm_download(len(episodes), "audio files")
-        if choice == "none":
-            print_info("Download cancelled.")
-            return
+        # Confirm download (skip if auto_confirm)
+        if auto_confirm:
+            choice = "all"
+        else:
+            choice = confirm_download(len(episodes), "audio files")
+            if choice == "none":
+                print_info("Download cancelled.")
+                return
 
-        if choice == "select":
-            indices = select_items(episodes)
-            episodes = [episodes[i] for i in indices]
+            if choice == "select":
+                indices = select_items(episodes)
+                episodes = [episodes[i] for i in indices]
 
         # Download episodes
         download_episodes(episodes, page_title, output_dir, db)

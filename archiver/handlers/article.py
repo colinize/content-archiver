@@ -35,7 +35,7 @@ from ..core.progress import (
 AUDIO_EXTENSIONS = ['.mp3', '.m4a', '.wav', '.ogg', '.aac']
 
 
-def handle_article(url: str, output_dir: Path, db: Database) -> None:
+def handle_article(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
     """Handle article/blog post URLs."""
     print_info("Fetching page content...")
 
@@ -52,7 +52,7 @@ def handle_article(url: str, output_dir: Path, db: Database) -> None:
         if has_audio:
             print_info("Audio files detected - handling as podcast page...")
             from .podcast import handle_audio_webpage
-            handle_audio_webpage(url, output_dir, db)
+            handle_audio_webpage(url, output_dir, db, auto_confirm=auto_confirm)
             return
 
         # Extract article content

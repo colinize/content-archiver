@@ -105,7 +105,8 @@ def detect_youtube_type(url: str) -> Literal["video", "playlist", "channel"]:
     """Detect the type of YouTube content."""
     url_lower = url.lower()
 
-    if 'playlist' in url_lower:
+    # Check for playlist (both /playlist? and ?list= query param)
+    if 'playlist' in url_lower or 'list=' in url_lower:
         return "playlist"
     elif any(p in url_lower for p in ['/@', '/channel/', '/c/', '/user/']):
         return "channel"

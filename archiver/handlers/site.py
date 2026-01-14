@@ -32,8 +32,18 @@ def get_api_key() -> Optional[str]:
     return os.environ.get('FIRECRAWL_API_KEY')
 
 
-def handle_site(url: str, output_dir: Path, db: Database) -> None:
-    """Handle full website archiving."""
+def handle_site(
+    url: str,
+    output_dir: Path,
+    db: Database,
+    auto_confirm: bool = False,
+    exclude_paths: List[str] = None
+) -> None:
+    """Handle full website archiving.
+
+    Args:
+        exclude_paths: List of URL path patterns to exclude (e.g., ['/topcast/', '/old/'])
+    """
     api_key = get_api_key()
 
     if not api_key:
@@ -57,6 +67,18 @@ def handle_site(url: str, output_dir: Path, db: Database) -> None:
             print_warning("No URLs found on site.")
             return
 
+        # Filter out excluded paths
+        if exclude_paths:
+            original_count = len(urls)
+            urls = [u for u in urls if not any(exc in u for exc in exclude_paths)]
+            excluded_count = original_count - len(urls)
+            if excluded_count > 0:
+                print_info(f"Excluded {excluded_count} URLs matching: {', '.join(exclude_paths)}")
+
+        if not urls:
+            print_warning("No URLs remaining after exclusions.")
+            return
+
         # Build items list for display
         items = [{"title": u, "url": u} for u in urls]
 
@@ -64,15 +86,18 @@ def handle_site(url: str, output_dir: Path, db: Database) -> None:
         domain = urlparse(url).netloc
         show_found_items("Website", domain, items, "pages")
 
-        # Confirm download
-        choice = confirm_download(len(items), "pages")
-        if choice == "none":
-            print_info("Download cancelled.")
-            return
+        # Confirm download (skip if auto_confirm)
+        if auto_confirm:
+            choice = "all"
+        else:
+            choice = confirm_download(len(items), "pages")
+            if choice == "none":
+                print_info("Download cancelled.")
+                return
 
-        if choice == "select":
-            indices = select_items(items)
-            urls = [items[i]['url'] for i in indices]
+            if choice == "select":
+                indices = select_items(items)
+                urls = [items[i]['url'] for i in indices]
 
         # Crawl the selected URLs
         crawl_site(urls, url, output_dir, db, api_key)

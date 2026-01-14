@@ -21,6 +21,7 @@ from .core.progress import (
 @click.command()
 @click.argument("url", required=False)
 @click.option("--batch", "-b", type=click.Path(exists=True), help="Process URLs from a file")
+@click.option("--yes", "-y", is_flag=True, help="Auto-confirm all prompts (download all items)")
 @click.option("--resume", "-r", is_flag=True, help="Resume interrupted downloads")
 @click.option("--status", "-s", is_flag=True, help="Show archive status")
 @click.option("--output", "-o", type=click.Path(), help="Output directory")
@@ -28,6 +29,7 @@ from .core.progress import (
 def main(
     url: Optional[str],
     batch: Optional[str],
+    yes: bool,
     resume: bool,
     status: bool,
     output: Optional[str],
@@ -79,15 +81,20 @@ def main(
     # Handle --batch flag
     if batch:
         batch_path = Path(batch)
-        urls = [line.strip() for line in batch_path.read_text().splitlines() if line.strip()]
+        # Skip empty lines and comments (lines starting with #)
+        urls = [
+            line.strip() for line in batch_path.read_text().splitlines()
+            if line.strip() and not line.strip().startswith('#')
+        ]
         if not urls:
             print_error("No URLs found in batch file.")
             return
 
         print_info(f"Processing {len(urls)} URLs from batch file...")
+        # Auto-confirm in batch mode
         for i, batch_url in enumerate(urls, 1):
             print_info(f"\n[{i}/{len(urls)}] {batch_url}")
-            archive_url(batch_url, output, db)
+            archive_url(batch_url, output, db, auto_confirm=True)
         return
 
     # Handle single URL
@@ -95,10 +102,10 @@ def main(
         console.print(main.get_help(click.Context(main)))
         return
 
-    archive_url(url, output, db)
+    archive_url(url, output, db, auto_confirm=yes)
 
 
-def archive_url(url: str, output: Optional[str], db: Database) -> None:
+def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: bool = False) -> None:
     """Archive a single URL."""
     # Detect content type
     content_type = detect_content_type(url)
@@ -113,11 +120,11 @@ def archive_url(url: str, output: Optional[str], db: Database) -> None:
     try:
         if content_type == ContentType.YOUTUBE:
             from .handlers.youtube import handle_youtube
-            handle_youtube(url, output_dir, db)
+            handle_youtube(url, output_dir, db, auto_confirm=auto_confirm)
 
         elif content_type == ContentType.PODCAST:
             from .handlers.podcast import handle_podcast
-            handle_podcast(url, output_dir, db)
+            handle_podcast(url, output_dir, db, auto_confirm=auto_confirm)
 
         elif content_type == ContentType.FORUM:
             from .handlers.forum import handle_forum
@@ -125,7 +132,7 @@ def archive_url(url: str, output: Optional[str], db: Database) -> None:
 
         elif content_type == ContentType.ARTICLE:
             from .handlers.article import handle_article
-            handle_article(url, output_dir, db)
+            handle_article(url, output_dir, db, auto_confirm=auto_confirm)
 
         elif content_type == ContentType.SITE:
             from .handlers.site import handle_site
@@ -134,7 +141,7 @@ def archive_url(url: str, output: Optional[str], db: Database) -> None:
         else:
             print_warning(f"Unknown content type. Trying as article...")
             from .handlers.article import handle_article
-            handle_article(url, output_dir, db)
+            handle_article(url, output_dir, db, auto_confirm=auto_confirm)
 
     except ImportError as e:
         print_error(f"Handler not yet implemented: {e}")
