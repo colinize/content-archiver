@@ -3,12 +3,17 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Dict, Any
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import threading
 
 try:
     import yt_dlp
 except ImportError:
     yt_dlp = None
+
+# Thread-safe counter for progress
+_progress_lock = threading.Lock()
 
 from ..detector import detect_youtube_type
 from ..core.database import Database
@@ -123,13 +128,95 @@ def download_video(url: str, output_dir: Path, db: Database) -> None:
             db.update_status(dl_id, "error", error_message=str(e))
 
 
-def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
-    """Download a YouTube playlist."""
+def _video_exists(source_folder: Path, safe_title: str) -> bool:
+    """Check if video already exists in any supported format."""
+    for ext in ['mp4', 'webm', 'mkv', 'm4a']:
+        if (source_folder / f'{safe_title}.{ext}').exists():
+            return True
+    return False
+
+
+def _download_single_video(
+    item: Dict[str, Any],
+    index: int,
+    total: int,
+    source_folder: Path,
+    playlist_title: str,
+    db: Database,
+    progress_counter: Dict[str, int]
+) -> Dict[str, Any]:
+    """Download a single video from a playlist. Thread-safe."""
+    video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
+    title = item['title']
+    safe_title = sanitize_filename(f"{index:03d}_{title}")
+
+    result = {"index": index, "title": title, "status": "unknown"}
+
+    # Skip if already exists
+    if _video_exists(source_folder, safe_title):
+        with _progress_lock:
+            progress_counter['skipped'] += 1
+            current = progress_counter['completed'] + progress_counter['skipped'] + progress_counter['failed']
+        result["status"] = "skipped"
+        return result
+
+    # Track in database
+    dl_id = db.add_download(
+        url=video_url,
+        content_type="youtube",
+        source_name=playlist_title,
+        title=title
+    )
+
+    try:
+        db.update_status(dl_id, "downloading")
+
+        has_ffmpeg = shutil.which('ffmpeg') is not None
+        if has_ffmpeg:
+            ydl_opts = {
+                'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'merge_output_format': 'mp4',
+                'quiet': True,
+                'no_warnings': True,
+            }
+        else:
+            ydl_opts = {
+                'format': 'best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'quiet': True,
+                'no_warnings': True,
+            }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_url])
+
+        # Find actual file and update database
+        for ext in ['mp4', 'webm', 'mkv']:
+            if (source_folder / f'{safe_title}.{ext}').exists():
+                db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
+                break
+
+        with _progress_lock:
+            progress_counter['completed'] += 1
+        result["status"] = "completed"
+
+    except Exception as e:
+        db.update_status(dl_id, "error", error_message=str(e))
+        with _progress_lock:
+            progress_counter['failed'] += 1
+        result["status"] = "failed"
+        result["error"] = str(e)
+
+    return result
+
+
+def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3) -> None:
+    """Download a YouTube playlist with concurrent downloads."""
     print_info("Fetching playlist info...")
 
     try:
         # Convert video+list URL to playlist-only URL for proper extraction
-        import re
         from urllib.parse import urlparse, parse_qs
         parsed = urlparse(url)
         query = parse_qs(parsed.query)
@@ -175,65 +262,131 @@ def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bo
         # Create output folder
         source_folder = get_source_folder(output_dir, sanitize_filename(playlist_title), category="videos")
 
-        # Download each video
-        print_info(f"Downloading {len(items)} videos...")
+        # Check how many already exist
+        existing_count = sum(1 for i, item in enumerate(items, 1)
+                           if _video_exists(source_folder, sanitize_filename(f"{i:03d}_{item['title']}")))
 
-        for i, item in enumerate(items, 1):
-            video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
-            title = item['title']
+        if existing_count > 0:
+            print_info(f"Found {existing_count} already downloaded, will skip those")
 
-            console.print(f"\n[{i}/{len(items)}] {title}")
+        remaining = len(items) - existing_count
+        if remaining == 0:
+            print_success(f"All {len(items)} videos already downloaded!")
+            return
 
-            dl_id = db.add_download(
-                url=video_url,
-                content_type="youtube",
-                source_name=playlist_title,
-                title=title
-            )
+        print_info(f"Downloading {remaining} videos ({max_workers} concurrent)...")
 
-            try:
-                db.update_status(dl_id, "downloading")
-                safe_title = sanitize_filename(f"{i:03d}_{title}")
+        # Progress tracking
+        progress_counter = {'completed': 0, 'skipped': 0, 'failed': 0}
 
-                has_ffmpeg = shutil.which('ffmpeg') is not None
-                if has_ffmpeg:
-                    ydl_opts = {
-                        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
-                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                        'merge_output_format': 'mp4',
-                        'quiet': True,
-                        'no_warnings': True,
-                    }
-                else:
-                    ydl_opts = {
-                        'format': 'best[height<=1080]/best',
-                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                        'quiet': True,
-                        'no_warnings': True,
-                    }
+        # Download with thread pool for concurrent downloads
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all download tasks
+            futures = {
+                executor.submit(
+                    _download_single_video,
+                    item, i, len(items), source_folder, playlist_title, db, progress_counter
+                ): i for i, item in enumerate(items, 1)
+            }
 
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video_url])
+            # Process results as they complete
+            for future in as_completed(futures):
+                result = future.result()
+                with _progress_lock:
+                    done = progress_counter['completed'] + progress_counter['skipped'] + progress_counter['failed']
 
-                # Find actual file
-                for ext in ['mp4', 'webm', 'mkv']:
-                    if (source_folder / f'{safe_title}.{ext}').exists():
-                        db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
-                        break
-                print_success(f"Downloaded: {title}")
+                if result["status"] == "completed":
+                    console.print(f"[green]✓[/green] [{done}/{len(items)}] {result['title']}")
+                elif result["status"] == "skipped":
+                    console.print(f"[yellow]⊘[/yellow] [{done}/{len(items)}] {result['title']} (exists)")
+                elif result["status"] == "failed":
+                    console.print(f"[red]✗[/red] [{done}/{len(items)}] {result['title']}: {result.get('error', 'Unknown error')}")
 
-            except Exception as e:
-                print_error(f"Failed: {e}")
-                db.update_status(dl_id, "error", error_message=str(e))
-
-        print_success(f"Playlist download complete: {playlist_title}")
+        # Summary
+        console.print("")
+        print_success(f"Playlist complete: {progress_counter['completed']} downloaded, "
+                     f"{progress_counter['skipped']} skipped, {progress_counter['failed']} failed")
 
     except Exception as e:
         print_error(f"Failed to process playlist: {e}")
 
 
-def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
-    """Download videos from a YouTube channel."""
+def _download_channel_video(
+    item: Dict[str, Any],
+    index: int,
+    total: int,
+    source_folder: Path,
+    channel_name: str,
+    db: Database,
+    progress_counter: Dict[str, int]
+) -> Dict[str, Any]:
+    """Download a single video from a channel. Thread-safe."""
+    video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
+    title = item['title']
+    safe_title = sanitize_filename(title)
+
+    result = {"index": index, "title": title, "status": "unknown"}
+
+    # Skip if already exists
+    if _video_exists(source_folder, safe_title):
+        with _progress_lock:
+            progress_counter['skipped'] += 1
+        result["status"] = "skipped"
+        return result
+
+    # Track in database
+    dl_id = db.add_download(
+        url=video_url,
+        content_type="youtube",
+        source_name=channel_name,
+        title=title
+    )
+
+    try:
+        db.update_status(dl_id, "downloading")
+
+        has_ffmpeg = shutil.which('ffmpeg') is not None
+        if has_ffmpeg:
+            ydl_opts = {
+                'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'merge_output_format': 'mp4',
+                'quiet': True,
+                'no_warnings': True,
+            }
+        else:
+            ydl_opts = {
+                'format': 'best[height<=1080]/best',
+                'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
+                'quiet': True,
+                'no_warnings': True,
+            }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_url])
+
+        # Find actual file and update database
+        for ext in ['mp4', 'webm', 'mkv']:
+            if (source_folder / f'{safe_title}.{ext}').exists():
+                db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
+                break
+
+        with _progress_lock:
+            progress_counter['completed'] += 1
+        result["status"] = "completed"
+
+    except Exception as e:
+        db.update_status(dl_id, "error", error_message=str(e))
+        with _progress_lock:
+            progress_counter['failed'] += 1
+        result["status"] = "failed"
+        result["error"] = str(e)
+
+    return result
+
+
+def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3) -> None:
+    """Download videos from a YouTube channel with concurrent downloads."""
     print_info("Fetching channel info...")
 
     try:
@@ -273,58 +426,50 @@ def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: boo
         # Create output folder
         source_folder = get_source_folder(output_dir, sanitize_filename(channel_name), category="videos")
 
-        # Download each video
-        print_info(f"Downloading {len(items)} videos...")
+        # Check how many already exist
+        existing_count = sum(1 for item in items
+                           if _video_exists(source_folder, sanitize_filename(item['title'])))
 
-        for i, item in enumerate(items, 1):
-            video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
-            title = item['title']
+        if existing_count > 0:
+            print_info(f"Found {existing_count} already downloaded, will skip those")
 
-            console.print(f"\n[{i}/{len(items)}] {title}")
+        remaining = len(items) - existing_count
+        if remaining == 0:
+            print_success(f"All {len(items)} videos already downloaded!")
+            return
 
-            dl_id = db.add_download(
-                url=video_url,
-                content_type="youtube",
-                source_name=channel_name,
-                title=title
-            )
+        print_info(f"Downloading {remaining} videos ({max_workers} concurrent)...")
 
-            try:
-                db.update_status(dl_id, "downloading")
-                safe_title = sanitize_filename(title)
+        # Progress tracking
+        progress_counter = {'completed': 0, 'skipped': 0, 'failed': 0}
 
-                has_ffmpeg = shutil.which('ffmpeg') is not None
-                if has_ffmpeg:
-                    ydl_opts = {
-                        'format': 'bestvideo[height<=1080]+bestaudio/best[height<=1080]/best',
-                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                        'merge_output_format': 'mp4',
-                        'quiet': True,
-                        'no_warnings': True,
-                    }
-                else:
-                    ydl_opts = {
-                        'format': 'best[height<=1080]/best',
-                        'outtmpl': str(source_folder / f'{safe_title}.%(ext)s'),
-                        'quiet': True,
-                        'no_warnings': True,
-                    }
+        # Download with thread pool for concurrent downloads
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            # Submit all download tasks
+            futures = {
+                executor.submit(
+                    _download_channel_video,
+                    item, i, len(items), source_folder, channel_name, db, progress_counter
+                ): i for i, item in enumerate(items, 1)
+            }
 
-                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download([video_url])
+            # Process results as they complete
+            for future in as_completed(futures):
+                result = future.result()
+                with _progress_lock:
+                    done = progress_counter['completed'] + progress_counter['skipped'] + progress_counter['failed']
 
-                # Find actual file
-                for ext in ['mp4', 'webm', 'mkv']:
-                    if (source_folder / f'{safe_title}.{ext}').exists():
-                        db.update_status(dl_id, "complete", str(source_folder / f'{safe_title}.{ext}'))
-                        break
-                print_success(f"Downloaded: {title}")
+                if result["status"] == "completed":
+                    console.print(f"[green]✓[/green] [{done}/{len(items)}] {result['title']}")
+                elif result["status"] == "skipped":
+                    console.print(f"[yellow]⊘[/yellow] [{done}/{len(items)}] {result['title']} (exists)")
+                elif result["status"] == "failed":
+                    console.print(f"[red]✗[/red] [{done}/{len(items)}] {result['title']}: {result.get('error', 'Unknown error')}")
 
-            except Exception as e:
-                print_error(f"Failed: {e}")
-                db.update_status(dl_id, "error", error_message=str(e))
-
-        print_success(f"Channel download complete: {channel_name}")
+        # Summary
+        console.print("")
+        print_success(f"Channel complete: {progress_counter['completed']} downloaded, "
+                     f"{progress_counter['skipped']} skipped, {progress_counter['failed']} failed")
 
     except Exception as e:
         print_error(f"Failed to process channel: {e}")

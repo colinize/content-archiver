@@ -311,6 +311,21 @@ content archiver/
    - Fix: Installed deno via `brew install deno`
    - Also installed `yt-dlp[default]` from GitHub master for `yt-dlp-ejs` support
 
+#### New Features
+1. **Concurrent playlist/channel downloads**
+   - Added ThreadPoolExecutor for parallel video downloads (default: 3 workers)
+   - Significantly faster for large playlists
+
+2. **Skip-if-exists for resume capability**
+   - Checks if video already exists before downloading
+   - Shows count of existing videos at start
+   - Displays skip/complete/fail status per video
+   - Enables easy resume after interruption
+
+3. **Better progress reporting**
+   - Shows `✓` for completed, `⊘` for skipped, `✗` for failed
+   - Summary at end: "X downloaded, Y skipped, Z failed"
+
 #### Content Archived This Session
 **YouTube Playlists:**
 | Source | Videos |
