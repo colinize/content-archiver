@@ -31,7 +31,7 @@ from ..core.progress import (
 )
 
 
-def handle_youtube(url: str, output_dir: Path, db: Database, auto_confirm: bool = False) -> None:
+def handle_youtube(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, cookies_from_browser: Optional[str] = None) -> None:
     """Handle YouTube URLs (videos, playlists, channels)."""
     if yt_dlp is None:
         print_error("yt-dlp is not installed. Please run: pip install yt-dlp")
@@ -40,21 +40,27 @@ def handle_youtube(url: str, output_dir: Path, db: Database, auto_confirm: bool 
     youtube_type = detect_youtube_type(url)
     print_info(f"YouTube type: {youtube_type}")
 
+    if cookies_from_browser:
+        print_info(f"Using cookies from: {cookies_from_browser}")
+
     if youtube_type == "video":
-        download_video(url, output_dir, db)
+        download_video(url, output_dir, db, cookies_from_browser=cookies_from_browser)
     elif youtube_type == "playlist":
-        download_playlist(url, output_dir, db, auto_confirm=auto_confirm)
+        download_playlist(url, output_dir, db, auto_confirm=auto_confirm, cookies_from_browser=cookies_from_browser)
     elif youtube_type == "channel":
-        download_channel(url, output_dir, db, auto_confirm=auto_confirm)
+        download_channel(url, output_dir, db, auto_confirm=auto_confirm, cookies_from_browser=cookies_from_browser)
 
 
-def download_video(url: str, output_dir: Path, db: Database) -> None:
+def download_video(url: str, output_dir: Path, db: Database, cookies_from_browser: Optional[str] = None) -> None:
     """Download a single YouTube video."""
     print_info("Fetching video info...")
 
     try:
         # Get video info first
-        with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+        info_opts = {'quiet': True}
+        if cookies_from_browser:
+            info_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+        with yt_dlp.YoutubeDL(info_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
         title = info.get('title', 'Unknown')
@@ -109,6 +115,9 @@ def download_video(url: str, output_dir: Path, db: Database) -> None:
             }
             output_ext = 'webm'  # Usually webm without merging
 
+        if cookies_from_browser:
+            ydl_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
@@ -143,7 +152,8 @@ def _download_single_video(
     source_folder: Path,
     playlist_title: str,
     db: Database,
-    progress_counter: Dict[str, int]
+    progress_counter: Dict[str, int],
+    cookies_from_browser: Optional[str] = None
 ) -> Dict[str, Any]:
     """Download a single video from a playlist. Thread-safe."""
     video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
@@ -188,6 +198,9 @@ def _download_single_video(
                 'no_warnings': True,
             }
 
+        if cookies_from_browser:
+            ydl_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_url])
 
@@ -211,7 +224,7 @@ def _download_single_video(
     return result
 
 
-def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3) -> None:
+def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3, cookies_from_browser: Optional[str] = None) -> None:
     """Download a YouTube playlist with concurrent downloads."""
     print_info("Fetching playlist info...")
 
@@ -227,7 +240,10 @@ def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bo
             playlist_url = url
 
         # Get playlist info
-        with yt_dlp.YoutubeDL({'quiet': True, 'extract_flat': True}) as ydl:
+        info_opts = {'quiet': True, 'extract_flat': True}
+        if cookies_from_browser:
+            info_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+        with yt_dlp.YoutubeDL(info_opts) as ydl:
             info = ydl.extract_info(playlist_url, download=False)
 
         playlist_title = info.get('title', 'Unknown Playlist')
@@ -285,7 +301,7 @@ def download_playlist(url: str, output_dir: Path, db: Database, auto_confirm: bo
             futures = {
                 executor.submit(
                     _download_single_video,
-                    item, i, len(items), source_folder, playlist_title, db, progress_counter
+                    item, i, len(items), source_folder, playlist_title, db, progress_counter, cookies_from_browser
                 ): i for i, item in enumerate(items, 1)
             }
 
@@ -318,7 +334,8 @@ def _download_channel_video(
     source_folder: Path,
     channel_name: str,
     db: Database,
-    progress_counter: Dict[str, int]
+    progress_counter: Dict[str, int],
+    cookies_from_browser: Optional[str] = None
 ) -> Dict[str, Any]:
     """Download a single video from a channel. Thread-safe."""
     video_url = f"https://youtube.com/watch?v={item['url']}" if not item['url'].startswith('http') else item['url']
@@ -362,6 +379,9 @@ def _download_channel_video(
                 'no_warnings': True,
             }
 
+        if cookies_from_browser:
+            ydl_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([video_url])
 
@@ -385,13 +405,16 @@ def _download_channel_video(
     return result
 
 
-def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3) -> None:
+def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: bool = False, max_workers: int = 3, cookies_from_browser: Optional[str] = None) -> None:
     """Download videos from a YouTube channel with concurrent downloads."""
     print_info("Fetching channel info...")
 
     try:
         # Get channel videos
-        with yt_dlp.YoutubeDL({'quiet': True, 'extract_flat': True, 'playlistend': 100}) as ydl:
+        info_opts = {'quiet': True, 'extract_flat': True, 'playlistend': 100}
+        if cookies_from_browser:
+            info_opts['cookiesfrombrowser'] = (cookies_from_browser,)
+        with yt_dlp.YoutubeDL(info_opts) as ydl:
             info = ydl.extract_info(url, download=False)
 
         channel_name = info.get('uploader', info.get('channel', info.get('title', 'Unknown')))
@@ -449,7 +472,7 @@ def download_channel(url: str, output_dir: Path, db: Database, auto_confirm: boo
             futures = {
                 executor.submit(
                     _download_channel_video,
-                    item, i, len(items), source_folder, channel_name, db, progress_counter
+                    item, i, len(items), source_folder, channel_name, db, progress_counter, cookies_from_browser
                 ): i for i, item in enumerate(items, 1)
             }
 

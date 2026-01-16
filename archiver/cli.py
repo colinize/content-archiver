@@ -25,6 +25,7 @@ from .core.progress import (
 @click.option("--resume", "-r", is_flag=True, help="Resume interrupted downloads")
 @click.option("--status", "-s", is_flag=True, help="Show archive status")
 @click.option("--output", "-o", type=click.Path(), help="Output directory")
+@click.option("--cookies-from-browser", "-c", type=str, help="Browser to extract cookies from (chrome, firefox, safari, edge)")
 @click.version_option(package_name="content-archiver")
 def main(
     url: Optional[str],
@@ -33,6 +34,7 @@ def main(
     resume: bool,
     status: bool,
     output: Optional[str],
+    cookies_from_browser: Optional[str],
 ) -> None:
     """
     Archive content from any URL.
@@ -94,7 +96,7 @@ def main(
         # Auto-confirm in batch mode
         for i, batch_url in enumerate(urls, 1):
             print_info(f"\n[{i}/{len(urls)}] {batch_url}")
-            archive_url(batch_url, output, db, auto_confirm=True)
+            archive_url(batch_url, output, db, auto_confirm=True, cookies_from_browser=cookies_from_browser)
         return
 
     # Handle single URL
@@ -102,10 +104,10 @@ def main(
         console.print(main.get_help(click.Context(main)))
         return
 
-    archive_url(url, output, db, auto_confirm=yes)
+    archive_url(url, output, db, auto_confirm=yes, cookies_from_browser=cookies_from_browser)
 
 
-def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: bool = False) -> None:
+def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: bool = False, cookies_from_browser: Optional[str] = None) -> None:
     """Archive a single URL."""
     # Detect content type
     content_type = detect_content_type(url)
@@ -120,7 +122,7 @@ def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: boo
     try:
         if content_type == ContentType.YOUTUBE:
             from .handlers.youtube import handle_youtube
-            handle_youtube(url, output_dir, db, auto_confirm=auto_confirm)
+            handle_youtube(url, output_dir, db, auto_confirm=auto_confirm, cookies_from_browser=cookies_from_browser)
 
         elif content_type == ContentType.PODCAST:
             from .handlers.podcast import handle_podcast
