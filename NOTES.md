@@ -328,10 +328,26 @@ content archiver/
 
 #### Content Archived This Session
 **YouTube Playlists:**
-| Source | Videos |
-|--------|--------|
-| Pinball Expo 2025 (Pinball News) | 46 |
+| Source | Videos | Size |
+|--------|--------|------|
+| Pinball Expo 2025 (Pinball News) | 46 | 22GB |
+| Pinball Expo 2018 (Pinball News) | 23 (1 unavailable) | 12GB |
+| Pinball Expo 2022 (Pinball News) | 33 (1 unavailable) | 36GB |
+
+### Session 5 - Kaneda's Pinball Podcast Archive (Jan 15, 2025)
+
+#### Content Archived This Session
+**YouTube Playlists:**
+| Source | Videos | Size |
+|--------|--------|------|
+| Kaneda's Pinball Podcast (k) | 46 | 32GB |
+
+Playlist URL: `https://www.youtube.com/watch?v=4moPSmKUg-I&list=PLP-lGX1cksAJo2jUwFQOggnkbNHTXAGga`
+
+Content includes Saturday Morning Spectacular weekly streams, game reveal reactions (Alice, Dune, Kong, Harry Potter, D&D, Beetlejuice, JAWS 50th), 2024/2025 Kudos Awards shows, and Sunday Morning Service episodes.
+
+Note: Playlist showed 79 videos but only 46 were available for download (others may be private/unlisted/removed).
 
 ---
 
-*Last updated: January 14, 2025*
+*Last updated: January 15, 2025*
