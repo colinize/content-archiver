@@ -223,12 +223,34 @@ Content is organized by type, then by source:
 ## Command-Line Options
 
 ```bash
-archiver "URL"              # Archive a single URL
-archiver --batch urls.txt   # Archive URLs from a file (one per line)
-archiver --resume           # Resume interrupted downloads
-archiver --status           # Show download history
-archiver --help             # Show help
+archiver "URL"                      # Archive a single URL
+archiver -y "URL"                   # Auto-confirm (download all without prompting)
+archiver -c chrome "URL"            # Use browser cookies for authentication
+archiver --batch urls.txt           # Archive URLs from a file (one per line)
+archiver --resume                   # Resume interrupted downloads
+archiver --status                   # Show download history
+archiver --help                     # Show help
 ```
+
+### Browser Cookie Authentication (`-c` / `--cookies-from-browser`)
+
+Some YouTube videos require authentication to download (age-restricted, bot detection, etc.). Use the `-c` flag to authenticate with your browser's cookies:
+
+```bash
+# Use Chrome cookies
+archiver -c chrome "https://youtube.com/watch?v=VIDEO_ID"
+
+# Use Firefox cookies
+archiver -c firefox "https://youtube.com/playlist?list=PLAYLIST_ID"
+
+# Use Safari cookies
+archiver -c safari "https://youtube.com/@channel"
+
+# Use Edge cookies
+archiver -c edge "https://youtube.com/watch?v=VIDEO_ID"
+```
+
+**Note:** You must be logged into YouTube in the specified browser for this to work.
 
 ---
 
@@ -285,6 +307,17 @@ pip install -e .
 1. Video is private or age-restricted
 2. Video is geo-blocked in your region
 3. yt-dlp needs updating: `pip install --upgrade yt-dlp`
+
+### "Sign in to confirm you're not a bot" error
+
+**Problem:** YouTube is blocking downloads due to bot detection.
+
+**Solution:** Use browser cookies to authenticate:
+```bash
+archiver -c chrome "https://youtube.com/watch?v=VIDEO_ID"
+```
+
+This uses your logged-in YouTube session from Chrome (or firefox/safari/edge) to bypass the bot detection. Make sure you're logged into YouTube in that browser.
 
 ---
 
