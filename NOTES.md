@@ -138,8 +138,12 @@ pip install -e .
 - [ ] Archive.org integration for wayback saves
 - [ ] PDF export option
 - [ ] EPUB export for articles/forums
-- [ ] Transcript extraction for YouTube videos
-- [ ] Podcast chapter markers support
+- [x] Transcript extraction for YouTube videos ✅ (Session 8 - via media-transcriber)
+- [x] Podcast chapter markers support ✅ (Session 8 - via media-transcriber --chapters)
+- [x] Parallel transcription processing ✅ (Session 9 - via --workers flag)
+- [x] Combined document export ✅ (Session 9 - via --export flag)
+- [x] Named entity extraction ✅ (Session 9 - via --entities flag)
+- [x] Topic/keyword tagging ✅ (Session 9 - via --topics flag)
 - [ ] RSS feed generation from archived content
 - [ ] Deduplication across archives
 - [ ] Search across archived content
@@ -424,6 +428,131 @@ Episodes range from early episodes (ep 115+) through ep 432 (Kyle Spiteri, Nov 2
 - Initial URL `https://www.pinballprofile.com/podcast-2/` was detected as ARTICLE
 - Used RSS feed URL directly for proper podcast handling
 - XMLParsedAsHTMLWarning appeared (BeautifulSoup parsing XML as HTML) but didn't affect downloads
+
+### Session 8 - Media Transcriber Overhaul (Jan 17, 2025)
+
+Major improvements to the standalone media-transcriber project at `~/projects/media-transcriber/`.
+
+#### Core Engine Upgrade
+- **Switched from OpenAI Whisper to faster-whisper** (CTranslate2-based, 4x faster)
+- **Default model upgraded to large-v3** (most accurate, 1.5B parameters)
+- **Added pinball-specific vocabulary prompt** for improved accuracy on domain terms
+- **VAD filtering** (Silero-VAD) to skip silent sections
+- **Device auto-detection**: CUDA → MPS → CPU with appropriate compute types
+
+#### New Features Implemented
+
+| Feature | Flag | Description |
+|---------|------|-------------|
+| Progress bars | (automatic) | Rich progress with ETA during transcription |
+| Speaker diarization | `--diarize` | Identify who's speaking (requires HF_TOKEN) |
+| SRT subtitles | `--srt` | Generate .srt subtitle files |
+| VTT subtitles | `--vtt` | Generate WebVTT subtitle files |
+| Custom vocabulary | `--vocab FILE` | Load domain-specific terms from file |
+| Batch folders | (positional) | Process multiple folders in one command |
+| Summary generation | `--summarize` | LLM-generated summaries (Ollama/OpenAI) |
+| Chapters | `--chapters` | YouTube-compatible chapter markers |
+
+#### Content Archiver Integration
+Added `--transcribe` and `--transcribe-model` flags to archiver CLI:
+```bash
+archiver "https://youtube.com/watch?v=..." --transcribe
+archiver --batch urls.txt --transcribe --transcribe-model medium
+```
+
+Archiver calls the transcriber via subprocess after downloads complete.
+
+#### LLM Integration (for summaries/chapters)
+- **Auto-detection**: Tries Ollama first (free, local), falls back to OpenAI
+- **Ollama support**: `brew install ollama && ollama pull llama3.2`
+- **OpenAI support**: Set `OPENAI_API_KEY` environment variable
+- **Standalone modes**: `--summarize-only` and `--chapters-only` for existing transcripts
+
+#### Usage Examples
+```bash
+# Basic transcription
+python transcriber.py /path/to/podcasts
+
+# Full featured
+python transcriber.py /path/to/folder --diarize --srt --summarize --chapters
+
+# Multiple folders
+python transcriber.py ~/podcasts/show1 ~/podcasts/show2
+
+# Summarize existing transcripts
+python transcriber.py /path/to/folder --summarize-only
+
+# Generate chapters for existing transcripts
+python transcriber.py /path/to/folder --chapters-only
+```
+
+#### Files Modified
+- `~/projects/media-transcriber/transcriber.py` - Complete rewrite
+- `~/Desktop/Content Archiver/archiver/cli.py` - Added transcription integration
+
+### Session 9 - Media Transcriber Enhancements (Jan 17, 2025)
+
+Additional features added to the media-transcriber project.
+
+#### New Features Implemented
+
+| Feature | Flag | Description |
+|---------|------|-------------|
+| Parallel processing | `--workers N` / `-w N` | Transcribe multiple files simultaneously |
+| Combined export | `--export` | Merge all transcripts into single document |
+| Export-only mode | `--export-only` | Export existing transcripts without transcribing |
+| Export format | `--export-format` | Choose markdown or txt format |
+| Named entities | `--entities` | Extract people, companies, games, events, etc. |
+| Entities-only | `--entities-only` | Extract from existing transcripts |
+| Topic extraction | `--topics` | Extract main topics, keywords, themes |
+| Topics-only | `--topics-only` | Extract from existing transcripts |
+
+#### Parallel Processing
+- Uses `ThreadPoolExecutor` for concurrent file processing
+- Thread-safe console output via `Lock()`
+- Recommended max: 3 workers (model memory constraints)
+- Example: `python transcriber.py /folder --workers 3`
+
+#### Combined Document Export
+- Collects all `.transcript.md` files from specified folders
+- Markdown format includes table of contents with links
+- Plain text format strips markdown formatting
+- Useful for importing full podcast series into AI tools
+- Example: `python transcriber.py /folder --export-only --export-format txt`
+
+#### Named Entity Extraction
+- Uses LLM (Ollama/OpenAI) to extract structured entities
+- Categories: people, companies, games, events, places, products
+- Output: `.entities.json` files
+- Pinball-optimized: recognizes designers, manufacturers, machines
+- Example: `python transcriber.py /folder --entities-only`
+
+#### Keyword/Topic Tagging
+- Uses LLM to extract main topics and keywords
+- Output fields: main_topics, keywords, themes, tone
+- Output: `.topics.json` files
+- Useful for categorization and searchability
+- Example: `python transcriber.py /folder --topics-only`
+
+#### Usage Examples
+```bash
+# Parallel transcription (2 files at once)
+python transcriber.py /path/to/folder --workers 2
+
+# Full analysis pipeline
+python transcriber.py /folder --summarize --chapters --entities --topics
+
+# Export existing transcripts to single markdown
+python transcriber.py /folder --export-only
+
+# Extract metadata from existing transcripts
+python transcriber.py /folder --entities-only --topics-only --summarize-only
+```
+
+#### Implementation Notes
+- All LLM features use the same provider system (`--summarize-provider`, `--summarize-model`)
+- Entity/topic extraction uses JSON output mode for structured responses
+- Fallback regex parsing if LLM returns malformed JSON
 
 ---
 

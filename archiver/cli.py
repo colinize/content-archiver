@@ -1,5 +1,6 @@
 """Main CLI entry point for the Content Archiver."""
 
+import subprocess
 import sys
 import click
 from pathlib import Path
@@ -17,6 +18,11 @@ from .core.progress import (
     show_status,
 )
 
+# Path to media-transcriber
+TRANSCRIBER_PATH = Path.home() / "projects" / "media-transcriber"
+TRANSCRIBER_SCRIPT = TRANSCRIBER_PATH / "transcriber.py"
+TRANSCRIBER_VENV = TRANSCRIBER_PATH / "venv" / "bin" / "python"
+
 
 @click.command()
 @click.argument("url", required=False)
@@ -26,6 +32,8 @@ from .core.progress import (
 @click.option("--status", "-s", is_flag=True, help="Show archive status")
 @click.option("--output", "-o", type=click.Path(), help="Output directory")
 @click.option("--cookies-from-browser", "-c", type=str, help="Browser to extract cookies from (chrome, firefox, safari, edge)")
+@click.option("--transcribe", "-t", is_flag=True, help="Transcribe downloaded audio/video files")
+@click.option("--transcribe-model", type=str, default="large-v3", help="Whisper model for transcription (default: large-v3)")
 @click.version_option(package_name="content-archiver")
 def main(
     url: Optional[str],
@@ -35,6 +43,8 @@ def main(
     status: bool,
     output: Optional[str],
     cookies_from_browser: Optional[str],
+    transcribe: bool,
+    transcribe_model: str,
 ) -> None:
     """
     Archive content from any URL.
@@ -95,9 +105,19 @@ def main(
 
         print_info(f"Processing {len(urls)} URLs from batch file...")
         # Auto-confirm in batch mode
+        folders_to_transcribe = []
         for i, batch_url in enumerate(urls, 1):
             print_info(f"\n[{i}/{len(urls)}] {batch_url}")
-            archive_url(batch_url, output, db, auto_confirm=True, cookies_from_browser=cookies_from_browser)
+            result_folder = archive_url(batch_url, output, db, auto_confirm=True, cookies_from_browser=cookies_from_browser)
+            if result_folder and transcribe:
+                folders_to_transcribe.append(result_folder)
+
+        # Transcribe all downloaded content
+        if transcribe and folders_to_transcribe:
+            print_info("\n--- Starting transcription ---")
+            for folder in set(folders_to_transcribe):  # Dedupe folders
+                if folder.exists():
+                    run_transcription(folder, transcribe_model)
         return
 
     # Handle single URL
@@ -105,11 +125,51 @@ def main(
         console.print(main.get_help(click.Context(main)))
         return
 
-    archive_url(url, output, db, auto_confirm=yes, cookies_from_browser=cookies_from_browser)
+    result_folder = archive_url(url, output, db, auto_confirm=yes, cookies_from_browser=cookies_from_browser)
+
+    # Transcribe if requested
+    if transcribe and result_folder and result_folder.exists():
+        print_info("\n--- Starting transcription ---")
+        run_transcription(result_folder, transcribe_model)
 
 
-def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: bool = False, cookies_from_browser: Optional[str] = None) -> None:
-    """Archive a single URL."""
+def run_transcription(folder: Path, model: str = "large-v3") -> None:
+    """Run transcription on media files in a folder."""
+    if not TRANSCRIBER_SCRIPT.exists():
+        print_warning(f"Transcriber not found at {TRANSCRIBER_SCRIPT}")
+        print_warning("Install media-transcriber to ~/projects/media-transcriber")
+        return
+
+    if not TRANSCRIBER_VENV.exists():
+        print_warning(f"Transcriber venv not found at {TRANSCRIBER_VENV}")
+        return
+
+    # Check for media files
+    media_extensions = {'.mp3', '.mp4', '.m4a', '.wav', '.mkv', '.mov', '.avi', '.webm'}
+    media_files = [f for f in folder.iterdir() if f.suffix.lower() in media_extensions]
+
+    if not media_files:
+        print_info("No media files to transcribe.")
+        return
+
+    print_info(f"Transcribing {len(media_files)} media file(s)...")
+
+    try:
+        result = subprocess.run(
+            [str(TRANSCRIBER_VENV), str(TRANSCRIBER_SCRIPT), str(folder), "--model", model],
+            cwd=str(TRANSCRIBER_PATH),
+            capture_output=False,
+        )
+        if result.returncode == 0:
+            print_success("Transcription complete!")
+        else:
+            print_warning("Transcription finished with errors")
+    except Exception as e:
+        print_error(f"Transcription failed: {e}")
+
+
+def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: bool = False, cookies_from_browser: Optional[str] = None) -> Optional[Path]:
+    """Archive a single URL. Returns the output folder path if successful."""
     # Detect content type
     content_type = detect_content_type(url)
     source_name = get_source_name_from_url(url, content_type)
@@ -118,6 +178,18 @@ def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: boo
 
     # Get output directory
     output_dir = Path(output) if output else get_output_dir()
+
+    # Determine content-specific output folder
+    content_folder_map = {
+        ContentType.YOUTUBE: "videos",
+        ContentType.FACEBOOK: "videos",
+        ContentType.PODCAST: "podcasts",
+        ContentType.FORUM: "forums",
+        ContentType.ARTICLE: "articles",
+        ContentType.SITE: "websites",
+    }
+    content_folder = content_folder_map.get(content_type, "articles")
+    download_folder = output_dir / content_folder / source_name
 
     # Route to appropriate handler
     try:
@@ -150,8 +222,11 @@ def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: boo
             from .handlers.article import handle_article
             handle_article(url, output_dir, db, auto_confirm=auto_confirm)
 
+        return download_folder
+
     except ImportError as e:
         print_error(f"Handler not yet implemented: {e}")
+        return None
     except Exception as e:
         print_error(f"Failed to archive: {e}")
         raise
