@@ -9,6 +9,7 @@ from enum import Enum
 class ContentType(Enum):
     """Types of content we can archive."""
     YOUTUBE = "youtube"
+    FACEBOOK = "facebook"
     PODCAST = "podcast"
     FORUM = "forum"
     ARTICLE = "article"
@@ -26,6 +27,16 @@ YOUTUBE_PATTERNS = [
     r'youtube\.com/user/',
     r'youtu\.be/',
     r'youtube\.com/shorts/',
+]
+
+# Facebook patterns
+FACEBOOK_PATTERNS = [
+    r'facebook\.com/.+/videos',
+    r'facebook\.com/watch',
+    r'facebook\.com/reel',
+    r'facebook\.com/.+/posts/',
+    r'fb\.watch/',
+    r'facebook\.com/video\.php',
 ]
 
 # Podcast platform patterns
@@ -82,6 +93,11 @@ def detect_content_type(url: str) -> ContentType:
         if re.search(pattern, url_lower):
             return ContentType.YOUTUBE
 
+    # Check Facebook
+    for pattern in FACEBOOK_PATTERNS:
+        if re.search(pattern, url_lower):
+            return ContentType.FACEBOOK
+
     # Check podcast platforms
     for pattern in PODCAST_PATTERNS:
         if re.search(pattern, url_lower):
@@ -110,6 +126,26 @@ def detect_youtube_type(url: str) -> Literal["video", "playlist", "channel"]:
         return "playlist"
     elif any(p in url_lower for p in ['/@', '/channel/', '/c/', '/user/']):
         return "channel"
+    else:
+        return "video"
+
+
+def detect_facebook_type(url: str) -> Literal["video", "page", "reel"]:
+    """Detect the type of Facebook content."""
+    url_lower = url.lower()
+
+    # Single video
+    if 'fb.watch/' in url_lower or 'video.php' in url_lower:
+        return "video"
+    # Reel
+    elif '/reel/' in url_lower:
+        return "reel"
+    # Page videos tab (e.g., /PageName/videos/)
+    elif '/videos' in url_lower:
+        return "page"
+    # /watch/ can be single video or page
+    elif '/watch/' in url_lower:
+        return "video"
     else:
         return "video"
 
@@ -158,6 +194,17 @@ def get_source_name_from_url(url: str, content_type: ContentType) -> str:
             return match.group(1)
         # For videos, just use youtube
         return "youtube"
+
+    elif content_type == ContentType.FACEBOOK:
+        # Try to extract page name from URL
+        # Pattern: facebook.com/PageName/videos
+        match = re.search(r'facebook\.com/([^/]+)/videos', url)
+        if match and match.group(1) not in ['watch', 'reel']:
+            return f"facebook-{match.group(1)}"
+        # fb.watch links
+        if 'fb.watch' in url:
+            return "facebook"
+        return "facebook"
 
     elif content_type == ContentType.PODCAST:
         # Use domain for podcasts

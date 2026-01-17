@@ -46,6 +46,7 @@ def main(
     Examples:
         archiver "https://youtube.com/watch?v=..."
         archiver "https://youtube.com/playlist?list=..."
+        archiver "https://facebook.com/PageName/videos/"
         archiver "https://podcast.example.com/feed.xml"
         archiver "https://reddit.com/r/.../comments/..."
         archiver "https://blog.example.com/post-title"
@@ -123,6 +124,10 @@ def archive_url(url: str, output: Optional[str], db: Database, auto_confirm: boo
         if content_type == ContentType.YOUTUBE:
             from .handlers.youtube import handle_youtube
             handle_youtube(url, output_dir, db, auto_confirm=auto_confirm, cookies_from_browser=cookies_from_browser)
+
+        elif content_type == ContentType.FACEBOOK:
+            from .handlers.facebook import handle_facebook
+            handle_facebook(url, output_dir, db, auto_confirm=auto_confirm, cookies_from_browser=cookies_from_browser)
 
         elif content_type == ContentType.PODCAST:
             from .handlers.podcast import handle_podcast

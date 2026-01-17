@@ -84,6 +84,14 @@ pip install -e .
 - Saves thumbnails and info.json
 - **ffmpeg fallback**: Works without ffmpeg installed (uses single format)
 
+### Facebook Handler (`handlers/facebook.py`)
+- Page videos download (all videos from a Facebook page)
+- Single video and reel download
+- Concurrent downloads (3 workers by default)
+- Skip-if-exists for resume capability
+- Browser cookie support for private content
+- Progress tracking with completion summary
+
 ### Podcast Handler (`handlers/podcast.py`)
 - RSS feed parsing with feedparser
 - Platform URL detection (Spotify, Apple, etc.)
@@ -137,6 +145,7 @@ pip install -e .
 - [ ] Search across archived content
 
 ### Content types to consider:
+- [x] Facebook videos/pages ✅ (Session 6)
 - [ ] Twitter/X threads
 - [ ] Instagram posts/reels
 - [ ] TikTok videos
@@ -363,6 +372,42 @@ Content includes Saturday Morning Spectacular weekly streams, game reveal reacti
 
 Initial attempt downloaded 45 videos; retry with `-c chrome` successfully downloaded remaining 34 videos.
 
+### Session 6 - Facebook Support (Jan 17, 2025)
+
+#### New Feature: Facebook Video Downloads
+Added support for downloading videos from Facebook pages and individual Facebook videos.
+
+**Supported URL formats:**
+- Page videos: `facebook.com/PageName/videos/`
+- Single video: `facebook.com/watch?v=...`
+- Video links: `fb.watch/...`
+- Reels: `facebook.com/reel/...`
+
+**Usage:**
+```bash
+# Download all videos from a Facebook page
+archiver "https://www.facebook.com/PageName/videos/"
+
+# With cookies for logged-in content
+archiver -c chrome "https://www.facebook.com/PageName/videos/"
+
+# Single video
+archiver "https://fb.watch/abc123/"
+```
+
+**Files changed:**
+- `detector.py`: Added `FACEBOOK` ContentType, URL patterns, `detect_facebook_type()` function
+- `handlers/facebook.py`: New handler using yt-dlp (mirrors YouTube handler structure)
+- `cli.py`: Added routing for Facebook URLs
+
+**Features:**
+- Auto-detects Facebook URLs (pages, videos, reels)
+- Page video listing with interactive selection
+- Concurrent downloads (3 workers by default)
+- Skip-if-exists for resume capability
+- Browser cookie support (`-c chrome`) for private/restricted content
+- Progress tracking with completion summary
+
 ---
 
-*Last updated: January 15, 2025*
+*Last updated: January 17, 2025*
