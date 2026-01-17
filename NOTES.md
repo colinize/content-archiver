@@ -408,6 +408,23 @@ archiver "https://fb.watch/abc123/"
 - Browser cookie support (`-c chrome`) for private/restricted content
 - Progress tracking with completion summary
 
+### Session 7 - Pinball Profile Podcast Archive (Jan 17, 2025)
+
+#### Content Archived This Session
+**Podcasts:**
+| Source | Episodes | Size |
+|--------|----------|------|
+| Pinball Profile Podcast | 341 | 13GB |
+
+RSS feed URL: `https://www.pinballprofile.com/feed/podcast/`
+
+Episodes range from early episodes (ep 115+) through ep 432 (Kyle Spiteri, Nov 2025). Notable interviews include Eugene Jarvis (ep 400), Todd MacCulloch, Josh Sharpe, and many pinball industry figures and competitive players.
+
+#### Notes
+- Initial URL `https://www.pinballprofile.com/podcast-2/` was detected as ARTICLE
+- Used RSS feed URL directly for proper podcast handling
+- XMLParsedAsHTMLWarning appeared (BeautifulSoup parsing XML as HTML) but didn't affect downloads
+
 ---
 
 *Last updated: January 17, 2025*
