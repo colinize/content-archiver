@@ -10,6 +10,7 @@ class ContentType(Enum):
     """Types of content we can archive."""
     YOUTUBE = "youtube"
     FACEBOOK = "facebook"
+    TWITCH = "twitch"
     PODCAST = "podcast"
     FORUM = "forum"
     ARTICLE = "article"
@@ -37,6 +38,16 @@ FACEBOOK_PATTERNS = [
     r'facebook\.com/.+/posts/',
     r'fb\.watch/',
     r'facebook\.com/video\.php',
+]
+
+# Twitch patterns
+TWITCH_PATTERNS = [
+    r'twitch\.tv/videos/',          # VODs: twitch.tv/videos/123456789
+    r'twitch\.tv/[^/]+/video/',     # VODs: twitch.tv/channel/video/123456789
+    r'twitch\.tv/[^/]+/clip/',      # Clips: twitch.tv/channel/clip/ClipName
+    r'clips\.twitch\.tv/',          # Clips: clips.twitch.tv/ClipName
+    r'twitch\.tv/[^/]+/clips',      # Channel clips page
+    r'twitch\.tv/[^/]+$',           # Channel page (for listing VODs)
 ]
 
 # Podcast platform patterns
@@ -101,6 +112,11 @@ def detect_content_type(url: str) -> ContentType:
         if re.search(pattern, url_lower):
             return ContentType.FACEBOOK
 
+    # Check Twitch
+    for pattern in TWITCH_PATTERNS:
+        if re.search(pattern, url_lower):
+            return ContentType.TWITCH
+
     # Check podcast platforms
     for pattern in PODCAST_PATTERNS:
         if re.search(pattern, url_lower):
@@ -151,6 +167,21 @@ def detect_facebook_type(url: str) -> Literal["video", "page", "reel"]:
         return "video"
     else:
         return "video"
+
+
+def detect_twitch_type(url: str) -> Literal["vod", "clip", "channel"]:
+    """Detect the type of Twitch content."""
+    url_lower = url.lower()
+
+    # Single VOD
+    if '/videos/' in url_lower or '/video/' in url_lower:
+        return "vod"
+    # Clips
+    elif '/clip/' in url_lower or 'clips.twitch.tv/' in url_lower or '/clips' in url_lower:
+        return "clip"
+    # Channel page (list VODs)
+    else:
+        return "channel"
 
 
 def detect_podcast_type(url: str) -> Literal["rss", "platform", "webpage"]:
@@ -208,6 +239,14 @@ def get_source_name_from_url(url: str, content_type: ContentType) -> str:
         if 'fb.watch' in url:
             return "facebook"
         return "facebook"
+
+    elif content_type == ContentType.TWITCH:
+        # Try to extract channel name from URL
+        # Pattern: twitch.tv/channelname or twitch.tv/channelname/videos
+        match = re.search(r'twitch\.tv/([^/]+)', url)
+        if match and match.group(1) not in ['videos', 'directory', 'clips']:
+            return f"twitch-{match.group(1)}"
+        return "twitch"
 
     elif content_type == ContentType.PODCAST:
         # Use domain for podcasts
