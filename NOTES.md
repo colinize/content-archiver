@@ -659,6 +659,47 @@ python scripts/rename_episodes.py "podcasts/FolderName"
 - ID3 tagged: 572 (11 failed due to iCloud sync timeouts)
 - All 583 files renamed with date and episode title
 
+### Session 13 - Knapp Arcade Archives (Jan 18, 2025)
+
+#### New Feature: Cookie-Authenticated API Scraper
+Created `scripts/scrape_knapp_archives.py` to scrape content behind login walls using browser cookies.
+
+**Features:**
+- Auto-extracts cookies from Chrome/Firefox/Safari via `browser_cookie3`
+- Manual cookie string option (`--cookie`) for Keychain-free operation
+- Handles paginated and single-response APIs
+- Saves individual markdown files + combined JSON
+
+**Usage:**
+```bash
+# Auto-extract cookies from browser
+python scripts/scrape_knapp_archives.py
+
+# Manual cookie string
+python scripts/scrape_knapp_archives.py --cookie "session=abc123"
+
+# Debug mode to see API response
+python scripts/scrape_knapp_archives.py --debug
+```
+
+#### Content Archived This Session
+**Articles:**
+| Source | Posts | Size |
+|--------|-------|------|
+| Knapp Arcade Archives (API) | 999 | 6.4MB |
+
+- Posts include arcade reports, pinball reviews, event coverage, industry news
+- Content spans 2016-2025
+- Full post content captured (not truncated "read more" excerpts)
+- API endpoint: `https://www.knapparcade.org/api/archives`
+- Authentication: Browser cookies (paid membership required)
+
+#### Technical Notes
+- Site is a React app hosted on Replit with Stripe payments
+- API returns all 1000 posts in single response (no pagination needed)
+- Post fields: `id`, `title`, `slug`, `content`, `excerpt`, `publish_date`, `published_at`, `created_at`, `updated_at`, `author_id`, `source_url`
+- macOS Keychain access required for Chrome cookie extraction (or use `--cookie` flag)
+
 ---
 
-*Last updated: January 17, 2025*
+*Last updated: January 18, 2025*
