@@ -591,6 +591,38 @@ python transcriber.py /folder --entities-only --topics-only --summarize-only
 - Both archives may have different content - kept separate for completeness
 - SoundCloud filenames have proper episode titles; Zencastr uses UUIDs
 
+### Session 11 - Wedgehead Podcast Transcription (Jan 17, 2025)
+
+#### Transcription Progress
+Started transcription of Wedgehead Pinball Podcast (110 episodes) using media-transcriber.
+
+| Status | Count |
+|--------|-------|
+| Total episodes | 110 |
+| Transcribed | 7 (Episodes 1-7) |
+| Remaining | 103 |
+| Avg time/episode | ~35 min (CPU, large-v3 model) |
+
+#### Process Details
+- Transcription process started at 4:15 PM (PID 28846)
+- Running on CPU with int8 quantization (large-v3 model)
+- Using pinball-specific vocabulary prompt
+- Process still running when session paused
+
+#### Completed Transcripts
+1. Episode 1 - Lightning Flippers (16:51)
+2. Episode 2 - The Ritchie Brothers Steve vs. Mark (17:53)
+3. Episode 3 - Boutique Manufacturers (18:21)
+4. Episode 4 - The Brief History of Wedgehead (18:57)
+5. Episode 5 - Video Modes (19:32)
+6. Episode 6 - Howdy Pardner (20:16)
+7. Episode 7 - Die on this Hill: Gilligan's Island (20:44)
+
+#### Notes
+- Episode 8 (Pinball Terminology Explained) in progress when paused
+- Estimated ~60 hours remaining for full transcription
+- Process will continue running in background
+
 ---
 
 *Last updated: January 17, 2025*
