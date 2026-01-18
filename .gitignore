@@ -45,5 +45,12 @@ Thumbs.db
 *.webm
 *.mkv
 
+# Archive content folders
+podcasts/
+videos/
+articles/
+forums/
+websites/
+
 # Don't ignore the archiver package
 !archiver/

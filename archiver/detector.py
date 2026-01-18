@@ -51,10 +51,13 @@ PODCAST_PATTERNS = [
     r'libsyn\.com',
     r'spreaker\.com',
     r'simplecast\.com',
+    r'zencastr\.com/f/',
+    r'patreon\.com/rss/',  # Patreon podcast RSS feeds
     r'/feed\.xml',
     r'/rss\.xml',
     r'/feed/?$',
     r'/rss/?$',
+    r'/rss/',  # RSS anywhere in path (not just at end)
 ]
 
 # Forum patterns

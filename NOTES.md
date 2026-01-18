@@ -623,6 +623,42 @@ Started transcription of Wedgehead Pinball Podcast (110 episodes) using media-tr
 - Estimated ~60 hours remaining for full transcription
 - Process will continue running in background
 
+### Session 12 - Patreon RSS Support (Jan 17, 2025)
+
+#### New Feature: Patreon Personal RSS Feeds
+Added support for downloading podcasts from Patreon personal RSS feeds.
+
+**Bug Fixed:**
+- `/rss/?$` pattern only matched RSS at end of path
+- Patreon URLs like `/rss/creatorname` weren't detected as podcasts
+- Added `patreon.com/rss/` and `/rss/` patterns to detector
+
+**New Scripts Created:**
+- `scripts/tag_simple.py` - Add ID3 metadata from RSS feed to downloaded MP3s
+- `scripts/rename_episodes.py` - Rename files using episode titles and dates
+
+**Usage:**
+```bash
+# Download Patreon podcast
+archiver --yes "https://www.patreon.com/rss/creatorname?auth=TOKEN&show=ID"
+
+# Tag files with metadata (requires feed.xml in folder)
+python scripts/tag_simple.py "podcasts/FolderName"
+
+# Rename files to "YYYY-MM-DD_Episode Title.mp3"
+python scripts/rename_episodes.py "podcasts/FolderName"
+```
+
+#### Content Archived This Session
+**Podcasts:**
+| Source | Episodes | Size |
+|--------|----------|------|
+| Kaneda Patreon (RSS) | 590 | 23GB |
+
+- Episodes range from Dec 2021 (Ep 634) to Jan 2026 (Ep 1178)
+- ID3 tagged: 572 (11 failed due to iCloud sync timeouts)
+- All 583 files renamed with date and episode title
+
 ---
 
 *Last updated: January 17, 2025*
