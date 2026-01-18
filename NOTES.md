@@ -554,6 +554,43 @@ python transcriber.py /folder --entities-only --topics-only --summarize-only
 - Entity/topic extraction uses JSON output mode for structured responses
 - Fallback regex parsing if LLM returns malformed JSON
 
+### Session 10 - Loser Kid Pinball Podcast Archive (Jan 17, 2025)
+
+#### Content Archived This Session
+**Podcasts:**
+| Source | Episodes | Size |
+|--------|----------|------|
+| Pinball Profile Podcast (RSS) | 341 | 13GB |
+| LoserKid Pinball Podcast (Zencastr) | 197 | 11GB |
+| LoserKid Pinball Podcast (SoundCloud) | 166 | 8.2GB |
+
+**Total this session:** 704 episodes, ~32GB
+
+#### Archive Details
+
+**Pinball Profile Podcast:**
+- RSS feed: `https://www.pinballprofile.com/feed/podcast/`
+- Episodes range from ep 115 through ep 432 (Kyle Spiteri, Nov 2025)
+- Notable interviews: Eugene Jarvis (ep 400), Todd MacCulloch, Josh Sharpe
+
+**LoserKid Pinball Podcast (Zencastr):**
+- RSS feed: `https://feeds.zencastr.com/f/xtY9MlLy.rss`
+- 197 episodes with UUID filenames
+- Direct MP3 downloads, faster archive process
+- Saved to `podcasts/LoserKid_Pinball_Podcast/`
+
+**LoserKid Pinball Podcast (SoundCloud):**
+- URL: `https://soundcloud.com/loserkidpinballpodcast`
+- 166 episodes with proper titles
+- Used yt-dlp directly (HLS streaming, slower)
+- Saved to `podcasts/Loser_Kid_Pinball_Podcast/`
+
+#### Notes
+- SoundCloud requires yt-dlp (HLS streaming) while Zencastr has direct MP3s
+- Zencastr has 31 more episodes than SoundCloud (likely newer episodes)
+- Both archives may have different content - kept separate for completeness
+- SoundCloud filenames have proper episode titles; Zencastr uses UUIDs
+
 ---
 
 *Last updated: January 17, 2025*
