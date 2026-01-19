@@ -715,7 +715,8 @@ python scripts/scrape_knapp_archives.py --debug
 | Source | Episodes | Size |
 |--------|----------|------|
 | Eclectic Gamers Podcast | 264 | 15GB |
-| Slam Tilt Podcast | 100 | ~8GB |
+| Slam Tilt Podcast (RSS) | 100 | ~8GB |
+| Slam Tilt Podcast (Website scrape) | 164 | ~14GB |
 
 **Individual YouTube Videos:**
 | Source | Video | Size |
@@ -724,6 +725,7 @@ python scripts/scrape_knapp_archives.py --debug
 | Wormhole Pinball | TWIPY Awards Show 2025 Part II | 2.4GB |
 | Kaneda Pinball | Episode 1000: George Gomez | 311MB |
 | Kaneda Pinball | Kaneda Visits Automated Pinball | 297MB |
+| LoserKid Pinball | Ep 130: 2023 TWIPYs Results | 489MB |
 
 **2024 Playlist:** `https://www.youtube.com/watch?v=9dLjuLczXyk&list=PLsqJ4LfOEWVXentrasEM8kZcDeJIaSc9u`
 - Dutch Pinball Exclusive, Jersey Jack Pinball (2), Stern Pinball, Pinball Brothers, Barrels of Fun, Hexa Pinball, Dutch Pinball Museum, 23-Minute Tour
@@ -743,20 +745,23 @@ python scripts/scrape_knapp_archives.py --debug
 - 1 file failed (Mike Homepin interview - malformed URL in feed)
 
 **Slam Tilt Podcast:** `https://www.slamtiltpodcast.com/feed/podcast`
-- 100 episodes (Episodes 164-262)
-- All downloads successful
+- RSS feed only contains last 100 episodes (164-262)
+- Created `scripts/scrape_slam_tilt.py` to scrape episodes 1-163 from website
+- Website has all episodes with direct Blubrry MP3 links
+- Total: 264 episodes (1-262 plus 149.5, 249.5), 24GB
 
 **Individual Videos:**
 - TWIPY Awards Show 2025 (Parts I & II) - Annual pinball awards ceremony
 - Kaneda Episode 1000 - George Gomez interview (legendary pinball designer)
 - Kaneda Visits Automated Pinball - Tour of pinball manufacturing facility
+- LoserKid Ep 130: 2023 TWIPYs Results - TWIPYs awards discussion
 
 #### Notes
 - YouTube playlists required Chrome cookies (`-c chrome`) due to bot detection
-- 89 playlist videos + 4 individual videos downloaded
+- 89 playlist videos + 5 individual videos downloaded
 - 4 Dirty Pool videos still rate-limited by YouTube (can retry later)
 - Eclectic Gamers: 264 of 265 episodes (1 failed - malformed URL)
-- Slam Tilt: 100 of 100 episodes (all successful)
+- Slam Tilt: 264 of 264 episodes (all successful - 100 from RSS, 164 from website)
 
 ---
 
