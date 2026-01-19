@@ -708,6 +708,7 @@ python scripts/scrape_knapp_archives.py --debug
 |--------|--------|------|
 | Dutch Pinball Open Expo 2024 (Pinball News) | 9 | 5.7GB |
 | Dutch Pinball Open Expo 2025 (Pinball News) | 9 | 5.1GB |
+| Dirty Pool Podcast (Pinball Industry) | 25 | 21GB |
 
 **Podcasts:**
 | Source | Episodes | Size |
@@ -720,13 +721,17 @@ python scripts/scrape_knapp_archives.py --debug
 **2025 Playlist:** `https://www.youtube.com/watch?v=00QmG2ovQv0&list=PLsqJ4LfOEWVU-5qsKv004M4_2luLiFd1_`
 - 28-Minute Tour, Dr. Sander Bakkes, Tony Ramunni, Steve Ritchie (2), Gary Stern & Jack Danger, Antoine Depelchin (Hexa), Pinball Brothers, Team NL JJP
 
+**Dirty Pool Podcast:** `https://www.youtube.com/playlist?list=PLS9lWVjGsygallsiz2_TJ_oxIlhl29fLC`
+- Pinball industry interviews (Scott Danesi, FAST Pinball, Spooky Pinball, etc.)
+- 4 videos still rate-limited by YouTube (can retry later)
+
 **Eclectic Gamers Podcast:** `http://feeds.feedburner.com/eclecticgamerspodcast`
 - Pinball & video games podcast, episodes 1-263 plus bonus interviews
 - 1 file failed (Mike Homepin interview - malformed URL in feed)
 
 #### Notes
 - YouTube playlists required Chrome cookies (`-c chrome`) due to bot detection
-- All 18 videos downloaded successfully
+- 43 of 47 YouTube videos downloaded (4 rate-limited, can retry later)
 - Podcast downloaded 264 of 265 episodes (1 failed due to malformed URL)
 
 ---
