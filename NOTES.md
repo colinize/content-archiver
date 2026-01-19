@@ -709,6 +709,7 @@ python scripts/scrape_knapp_archives.py --debug
 | Dutch Pinball Open Expo 2024 (Pinball News) | 9 | 5.7GB |
 | Dutch Pinball Open Expo 2025 (Pinball News) | 9 | 5.1GB |
 | Dirty Pool Podcast (Pinball Industry) | 25 | 21GB |
+| Wormhole Pinball Presents | 42 | 31GB |
 
 **Podcasts:**
 | Source | Episodes | Size |
@@ -725,13 +726,16 @@ python scripts/scrape_knapp_archives.py --debug
 - Pinball industry interviews (Scott Danesi, FAST Pinball, Spooky Pinball, etc.)
 - 4 videos still rate-limited by YouTube (can retry later)
 
+**Wormhole Pinball Presents:** `https://www.youtube.com/playlist?list=PLOPIF-UqiqSaBvV9PgsQ6ilI_TC-fjf3f`
+- 51 episodes including interviews, Project Pinball, Arcades Across America series
+
 **Eclectic Gamers Podcast:** `http://feeds.feedburner.com/eclecticgamerspodcast`
 - Pinball & video games podcast, episodes 1-263 plus bonus interviews
 - 1 file failed (Mike Homepin interview - malformed URL in feed)
 
 #### Notes
 - YouTube playlists required Chrome cookies (`-c chrome`) due to bot detection
-- 43 of 47 YouTube videos downloaded (4 rate-limited, can retry later)
+- 85 of 89 YouTube videos downloaded (4 rate-limited, can retry later)
 - Podcast downloaded 264 of 265 episodes (1 failed due to malformed URL)
 
 ---
