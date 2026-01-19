@@ -715,6 +715,15 @@ python scripts/scrape_knapp_archives.py --debug
 | Source | Episodes | Size |
 |--------|----------|------|
 | Eclectic Gamers Podcast | 264 | 15GB |
+| Slam Tilt Podcast | 100 | ~8GB |
+
+**Individual YouTube Videos:**
+| Source | Video | Size |
+|--------|-------|------|
+| Wormhole Pinball | TWIPY Awards Show 2025 Part I | 593MB |
+| Wormhole Pinball | TWIPY Awards Show 2025 Part II | 2.4GB |
+| Kaneda Pinball | Episode 1000: George Gomez | 311MB |
+| Kaneda Pinball | Kaneda Visits Automated Pinball | 297MB |
 
 **2024 Playlist:** `https://www.youtube.com/watch?v=9dLjuLczXyk&list=PLsqJ4LfOEWVXentrasEM8kZcDeJIaSc9u`
 - Dutch Pinball Exclusive, Jersey Jack Pinball (2), Stern Pinball, Pinball Brothers, Barrels of Fun, Hexa Pinball, Dutch Pinball Museum, 23-Minute Tour
@@ -733,11 +742,22 @@ python scripts/scrape_knapp_archives.py --debug
 - Pinball & video games podcast, episodes 1-263 plus bonus interviews
 - 1 file failed (Mike Homepin interview - malformed URL in feed)
 
+**Slam Tilt Podcast:** `https://www.slamtiltpodcast.com/feed/podcast`
+- 100 episodes (Episodes 164-262)
+- All downloads successful
+
+**Individual Videos:**
+- TWIPY Awards Show 2025 (Parts I & II) - Annual pinball awards ceremony
+- Kaneda Episode 1000 - George Gomez interview (legendary pinball designer)
+- Kaneda Visits Automated Pinball - Tour of pinball manufacturing facility
+
 #### Notes
 - YouTube playlists required Chrome cookies (`-c chrome`) due to bot detection
-- 85 of 89 YouTube videos downloaded (4 rate-limited, can retry later)
-- Podcast downloaded 264 of 265 episodes (1 failed due to malformed URL)
+- 89 playlist videos + 4 individual videos downloaded
+- 4 Dirty Pool videos still rate-limited by YouTube (can retry later)
+- Eclectic Gamers: 264 of 265 episodes (1 failed - malformed URL)
+- Slam Tilt: 100 of 100 episodes (all successful)
 
 ---
 
-*Last updated: January 18, 2025*
+*Last updated: January 19, 2025*
