@@ -700,29 +700,24 @@ python scripts/scrape_knapp_archives.py --debug
 - Post fields: `id`, `title`, `slug`, `content`, `excerpt`, `publish_date`, `published_at`, `created_at`, `updated_at`, `author_id`, `source_url`
 - macOS Keychain access required for Chrome cookie extraction (or use `--cookie` flag)
 
-### Session 14 - Dutch Pinball Open Expo 2024 (Jan 18, 2025)
+### Session 14 - Dutch Pinball Open Expo 2024 & 2025 (Jan 18, 2025)
 
 #### Content Archived This Session
 **YouTube Playlists:**
 | Source | Videos | Size |
 |--------|--------|------|
 | Dutch Pinball Open Expo 2024 (Pinball News) | 9 | 5.7GB |
+| Dutch Pinball Open Expo 2025 (Pinball News) | 9 | 5.1GB |
 
-Playlist URL: `https://www.youtube.com/watch?v=9dLjuLczXyk&list=PLsqJ4LfOEWVXentrasEM8kZcDeJIaSc9u`
+**2024 Playlist:** `https://www.youtube.com/watch?v=9dLjuLczXyk&list=PLsqJ4LfOEWVXentrasEM8kZcDeJIaSc9u`
+- Dutch Pinball Exclusive, Jersey Jack Pinball (2), Stern Pinball, Pinball Brothers, Barrels of Fun, Hexa Pinball, Dutch Pinball Museum, 23-Minute Tour
 
-Videos include:
-1. Dutch Pinball Exclusive
-2. Jersey Jack Pinball (2 videos)
-3. Stern Pinball
-4. Pinball Brothers
-5. Barrels of Fun
-6. Hexa Pinball
-7. Dutch Pinball Museum
-8. Twenty Three Minute Tour
+**2025 Playlist:** `https://www.youtube.com/watch?v=00QmG2ovQv0&list=PLsqJ4LfOEWVU-5qsKv004M4_2luLiFd1_`
+- 28-Minute Tour, Dr. Sander Bakkes, Tony Ramunni, Steve Ritchie (2), Gary Stern & Jack Danger, Antoine Depelchin (Hexa), Pinball Brothers, Team NL JJP
 
 #### Notes
 - Required Chrome cookies (`-c chrome`) due to YouTube bot detection
-- All 9 videos downloaded successfully
+- All 18 videos downloaded successfully
 
 ---
 
