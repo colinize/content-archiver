@@ -709,15 +709,25 @@ python scripts/scrape_knapp_archives.py --debug
 | Dutch Pinball Open Expo 2024 (Pinball News) | 9 | 5.7GB |
 | Dutch Pinball Open Expo 2025 (Pinball News) | 9 | 5.1GB |
 
+**Podcasts:**
+| Source | Episodes | Size |
+|--------|----------|------|
+| Eclectic Gamers Podcast | 264 | 15GB |
+
 **2024 Playlist:** `https://www.youtube.com/watch?v=9dLjuLczXyk&list=PLsqJ4LfOEWVXentrasEM8kZcDeJIaSc9u`
 - Dutch Pinball Exclusive, Jersey Jack Pinball (2), Stern Pinball, Pinball Brothers, Barrels of Fun, Hexa Pinball, Dutch Pinball Museum, 23-Minute Tour
 
 **2025 Playlist:** `https://www.youtube.com/watch?v=00QmG2ovQv0&list=PLsqJ4LfOEWVU-5qsKv004M4_2luLiFd1_`
 - 28-Minute Tour, Dr. Sander Bakkes, Tony Ramunni, Steve Ritchie (2), Gary Stern & Jack Danger, Antoine Depelchin (Hexa), Pinball Brothers, Team NL JJP
 
+**Eclectic Gamers Podcast:** `http://feeds.feedburner.com/eclecticgamerspodcast`
+- Pinball & video games podcast, episodes 1-263 plus bonus interviews
+- 1 file failed (Mike Homepin interview - malformed URL in feed)
+
 #### Notes
-- Required Chrome cookies (`-c chrome`) due to YouTube bot detection
+- YouTube playlists required Chrome cookies (`-c chrome`) due to bot detection
 - All 18 videos downloaded successfully
+- Podcast downloaded 264 of 265 episodes (1 failed due to malformed URL)
 
 ---
 
