@@ -763,6 +763,24 @@ python scripts/scrape_knapp_archives.py --debug
 - Eclectic Gamers: 264 of 265 episodes (1 failed - malformed URL)
 - Slam Tilt: 264 of 264 episodes (all successful - 100 from RSS, 164 from website)
 
+### Session 15 - Triple Drain Podcast Archive (Jan 20, 2025)
+
+#### Content Archived This Session
+**YouTube Playlists:**
+| Source | Videos | Size |
+|--------|--------|------|
+| Triple Drain Pinball Podcast | 73 | 102GB |
+
+Playlist URL: `https://www.youtube.com/playlist?list=PLHjmRX5dT1epvHVN4-OEN0sBZs0zRrHpg`
+
+Episodes 1-70 (plus 29.5 INDISC recap). Pinball podcast featuring Tom, Joel, Travis, and guests discussing pinball news, game reviews, and industry topics.
+
+#### Notes
+- Partial download existed (48 videos) from previous attempt
+- First retry downloaded 8, but 17 failed due to concurrent file rename errors
+- Second retry confirmed all 73 complete
+- Required Chrome cookies (`-c chrome`) for authentication
+
 ---
 
-*Last updated: January 19, 2025*
+*Last updated: January 20, 2025*
