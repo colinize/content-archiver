@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-DEFAULT_OUTPUT_DIR = Path.home() / "Desktop" / "content archiver"
+DEFAULT_OUTPUT_DIR = Path.home() / "projects" / "content-archiver"
 ARCHIVER_DIR = DEFAULT_OUTPUT_DIR / ".archiver"
 CONFIG_FILE = ARCHIVER_DIR / "config.json"
 DATABASE_FILE = ARCHIVER_DIR / "archive.db"

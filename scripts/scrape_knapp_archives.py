@@ -11,7 +11,7 @@ Usage:
     python scripts/scrape_knapp_archives.py --cookie "session=abc123; token=xyz789"
 
     # Specify output directory
-    python scripts/scrape_knapp_archives.py --output ~/Desktop/knapp-archives
+    python scripts/scrape_knapp_archives.py --output ~/projects/content-archiver/articles/knapparcade.org
 """
 
 import argparse
@@ -31,7 +31,7 @@ from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TaskPr
 console = Console()
 
 API_URL = "https://www.knapparcade.org/api/archives"
-DEFAULT_OUTPUT = Path.home() / "Desktop" / "Content Archiver" / "articles" / "knapparcade.org"
+DEFAULT_OUTPUT = Path.home() / "projects" / "content-archiver" / "articles" / "knapparcade.org"
 
 
 def parse_cookie_string(cookie_string: str) -> dict:

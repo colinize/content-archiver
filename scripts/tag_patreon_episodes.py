@@ -6,7 +6,7 @@ Usage:
     python tag_patreon_episodes.py <rss_url> <folder_path> [--rename]
 
 Example:
-    python tag_patreon_episodes.py "https://www.patreon.com/rss/kanedapinball?auth=XXX" ~/Desktop/content\ archiver/podcasts/Kaneda/
+    python tag_patreon_episodes.py "https://www.patreon.com/rss/kanedapinball?auth=XXX" ~/projects/content-archiver/podcasts/Kaneda/
 """
 
 import sys

@@ -180,7 +180,7 @@ EPISODE_URLS = [
     "https://www.slamtiltpodcast.com/2021/04/03/episode-163-pintastic-quickie",
 ]
 
-OUTPUT_DIR = Path("/Users/calsheimer/Desktop/content archiver/podcasts/The_Slam_Tilt_Podcast")
+OUTPUT_DIR = Path.home() / "projects" / "content-archiver" / "podcasts" / "The_Slam_Tilt_Podcast"
 
 def extract_mp3_url(page_url):
     """Extract MP3 URL from episode page."""

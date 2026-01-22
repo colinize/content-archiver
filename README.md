@@ -69,7 +69,7 @@ archiver --status
 ## Output Structure
 
 ```
-~/Desktop/content archiver/
+~/projects/content-archiver/
 ├── videos/                       # YouTube content
 │   └── MKBHD/
 │       ├── video-title.mp4
