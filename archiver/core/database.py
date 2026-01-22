@@ -165,3 +165,58 @@ class Database:
             stats["total"] = total
 
             return stats
+
+    def get_sources(self) -> list[dict[str, Any]]:
+        """Get all unique sources with aggregated data."""
+        with sqlite3.connect(self.db_path) as conn:
+            rows = conn.execute("""
+                SELECT
+                    content_type,
+                    source_name,
+                    COUNT(*) as item_count,
+                    MIN(created_at) as first_archived,
+                    MAX(updated_at) as last_updated
+                FROM downloads
+                GROUP BY content_type, source_name
+                ORDER BY content_type, item_count DESC
+            """).fetchall()
+            return [
+                {
+                    "content_type": row[0],
+                    "source_name": row[1],
+                    "item_count": row[2],
+                    "first_archived": row[3],
+                    "last_updated": row[4],
+                }
+                for row in rows
+            ]
+
+    def get_source_items(self, content_type: str, source_name: str) -> list[Download]:
+        """Get all items for a specific source."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("""
+                SELECT * FROM downloads
+                WHERE content_type = ? AND source_name = ?
+                ORDER BY title
+            """, (content_type, source_name)).fetchall()
+            return [Download(**dict(row)) for row in rows]
+
+    def is_url_archived(self, url: str) -> bool:
+        """Check if a URL has been archived."""
+        with sqlite3.connect(self.db_path) as conn:
+            row = conn.execute("""
+                SELECT id FROM downloads WHERE url = ?
+            """, (url,)).fetchone()
+            return row is not None
+
+    def get_archived_info(self, url: str) -> Optional[Download]:
+        """Get archive info for a URL if it exists."""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute("""
+                SELECT * FROM downloads WHERE url = ?
+            """, (url,)).fetchone()
+            if row:
+                return Download(**dict(row))
+            return None

@@ -30,6 +30,7 @@ TRANSCRIBER_VENV = TRANSCRIBER_PATH / "venv" / "bin" / "python"
 @click.option("--yes", "-y", is_flag=True, help="Auto-confirm all prompts (download all items)")
 @click.option("--resume", "-r", is_flag=True, help="Resume interrupted downloads")
 @click.option("--status", "-s", is_flag=True, help="Show archive status")
+@click.option("--check", is_flag=True, help="Check if URL is already archived")
 @click.option("--output", "-o", type=click.Path(), help="Output directory")
 @click.option("--cookies-from-browser", "-c", type=str, help="Browser to extract cookies from (chrome, firefox, safari, edge)")
 @click.option("--transcribe", "-t", is_flag=True, help="Transcribe downloaded audio/video files")
@@ -41,6 +42,7 @@ def main(
     yes: bool,
     resume: bool,
     status: bool,
+    check: bool,
     output: Optional[str],
     cookies_from_browser: Optional[str],
     transcribe: bool,
@@ -75,6 +77,25 @@ def main(
         stats = db.get_stats()
         downloads = db.get_all()
         show_status(stats, downloads)
+        return
+
+    # Handle --check flag
+    if check:
+        if not url:
+            print_error("--check requires a URL argument")
+            return
+        archived_info = db.get_archived_info(url)
+        if archived_info:
+            print_success(f"ARCHIVED: {url}")
+            print_info(f"  Title: {archived_info.title}")
+            print_info(f"  Source: {archived_info.source_name}")
+            print_info(f"  Type: {archived_info.content_type}")
+            print_info(f"  Status: {archived_info.status}")
+            print_info(f"  Archived: {archived_info.created_at[:10]}")
+            if archived_info.local_path:
+                print_info(f"  Path: {archived_info.local_path}")
+        else:
+            print_warning(f"NOT ARCHIVED: {url}")
         return
 
     # Handle --resume flag
