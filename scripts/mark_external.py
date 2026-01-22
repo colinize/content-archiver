@@ -50,19 +50,64 @@ def count_files_in_folder(folder_path: Path) -> int:
     return count
 
 
+def find_matching_folder(external_root: Path, source: dict) -> tuple[Path | None, int]:
+    """Find a matching folder for a source on the external drive.
+
+    Checks both nested structure (videos/Source_Name/) and flat structure (Source_Name/).
+    Returns (folder_path, file_count) or (None, 0) if not found.
+    """
+    # Extract just the source folder name from the path (e.g., "Kaneda" from "podcasts/Kaneda")
+    source_folder_name = Path(source["folder_path"]).name
+
+    # Try nested path first (videos/Source_Name/)
+    nested_path = external_root / source["folder_path"]
+    if nested_path.exists():
+        count = count_files_in_folder(nested_path)
+        if count > 0:
+            return nested_path, count
+
+    # Try flat path (Source_Name/ directly in external root)
+    flat_path = external_root / source_folder_name
+    if flat_path.exists():
+        count = count_files_in_folder(flat_path)
+        if count > 0:
+            return flat_path, count
+
+    # Try fuzzy matching for slight name variations
+    if external_root.exists():
+        source_lower = source_folder_name.lower().replace('_', ' ').replace('-', ' ')
+        for folder in external_root.iterdir():
+            if folder.is_dir():
+                folder_lower = folder.name.lower().replace('_', ' ').replace('-', ' ')
+                # Check if names are similar enough (one contains the other or they match closely)
+                if source_lower in folder_lower or folder_lower in source_lower:
+                    count = count_files_in_folder(folder)
+                    if count > 0:
+                        return folder, count
+                # Also check exact match ignoring underscores/spaces
+                if source_lower.replace(' ', '') == folder_lower.replace(' ', ''):
+                    count = count_files_in_folder(folder)
+                    if count > 0:
+                        return folder, count
+
+    return None, 0
+
+
 def verify_external_files(
     archive_root: Path,
     external_root: Path,
     manifest: dict
 ) -> list[dict]:
-    """Verify which sources have files on external drive."""
+    """Verify which sources have files on external drive.
+
+    Supports both nested structure (videos/Source/) and flat structure (Source/).
+    """
     verified = []
 
     for source in manifest["sources"]:
-        external_folder = external_root / source["folder_path"]
-        file_count = count_files_in_folder(external_folder)
+        external_folder, file_count = find_matching_folder(external_root, source)
 
-        if file_count > 0:
+        if external_folder and file_count > 0:
             verified.append({
                 "source": source,
                 "external_folder": external_folder,
