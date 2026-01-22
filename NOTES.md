@@ -781,6 +781,37 @@ Episodes 1-70 (plus 29.5 INDISC recap). Pinball podcast featuring Tom, Joel, Tra
 - Second retry confirmed all 73 complete
 - Required Chrome cookies (`-c chrome`) for authentication
 
+### Session 16 - BDYETP Archive & Project Path Update (Jan 22, 2025)
+
+#### Content Archived This Session
+**YouTube Playlists:**
+| Source | Videos | Size |
+|--------|--------|------|
+| Bro, do you even TALK pinball? | 103 of 104 | ~80GB |
+
+Playlist URL: `https://www.youtube.com/watch?v=sW8uyOGQyAs&list=PLxv7Si8AfIM_uwMNdrpmkx0T1Z46UhTFr`
+
+Episodes 1-97+ of the BDYETP podcast. Content includes pinball news, game reveals (Elvira, Rick & Morty, Ghostbusters, Pirates, etc.), reviews, and industry coverage.
+
+#### Notes
+- 1 video unavailable (private video at position 5)
+- Initial download had 11 failures (1 private + 10 connection errors)
+- Retry successfully recovered 10 connection error videos
+- Final result: 103 downloaded, 1 permanently unavailable
+
+#### Project Path Migration
+Updated all default save paths from `~/Desktop/content archiver/` to `~/projects/content-archiver/`.
+
+**Files Updated:**
+- `archiver/core/config.py` - `DEFAULT_OUTPUT_DIR`
+- `scripts/scrape_pinball_podcast.py` - `OUTPUT_DIR`
+- `scripts/scrape_slam_tilt.py` - `OUTPUT_DIR`
+- `scripts/scrape_knapp_archives.py` - `DEFAULT_OUTPUT` + help text
+- `scripts/tag_patreon_episodes.py` - example in docstring
+- `README.md` - output structure example
+
+Commit: `c57cb21` - "Update default save paths from Desktop to projects folder"
+
 ---
 
-*Last updated: January 20, 2025*
+*Last updated: January 22, 2025*
