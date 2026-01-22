@@ -60,10 +60,38 @@
     └── {source}/_index.json
 ```
 
+### External Drive Testing (same session)
+
+**Drive:** My Passport for Mac at `/Volumes/My Passport for Mac/Pinball Media Archive`
+
+**Issue Found:** External drive had flat structure (all sources directly in root) instead of nested structure (videos/Source/, podcasts/Source/).
+
+**Fix:** Updated `mark_external.py` with `find_matching_folder()` function that checks:
+1. Nested path (videos/Source_Name/)
+2. Flat path (Source_Name/ directly in root)
+3. Fuzzy name matching for slight variations
+
+**Results:**
+- 50 sources detected on external drive
+- 23 complete sources marked as external
+- 27 partial sources (some files present, not all)
+
+**Folder Structure Created on External:**
+```
+/Volumes/My Passport for Mac/Pinball Media Archive/
+├── videos/           (18 source folders)
+├── podcasts/         (38 source folders)
+├── articles/         (4 source folders)
+├── websites/         (2 source folders)
+└── forums/           (1 source folder)
+```
+
+User will manually reorganize existing flat files into the new structure.
+
 ### Next Steps
-1. Mount external drive and run `mark_external.py` to track moved files
-2. Consider adding original source URLs to manifest for future re-downloading
-3. Test external drive workflow end-to-end
+1. Reorganize files on external drive into new folder structure
+2. Re-run `mark_external.py --verify` after reorganization
+3. Consider adding original source URLs to manifest for future re-downloading
 
 ### Decisions Made
 - Database is single source of truth; manifest is regenerable
