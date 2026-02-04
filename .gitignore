@@ -45,12 +45,20 @@ Thumbs.db
 *.webm
 *.mkv
 
-# Archive content folders
+# Archive content folders (media)
 podcasts/
 videos/
 articles/
 forums/
 websites/
+
+# Keep transcripts and logs
+!*transcripts/
+!*.log
+!*.txt
+
+# Except this one (121MB, too large for GitHub)
+soundcloud_output.log
 
 # Don't ignore the archiver package
 !archiver/

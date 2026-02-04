@@ -1,0 +1,536 @@
+ℹ Detected: ARTICLE - head2headpinball
+ℹ Fetching page content...
+ℹ Audio files detected - handling as podcast page...
+ℹ Scanning page for audio files...
+/Users/calsheimer/Desktop/Content Archiver/archiver/handlers/podcast.py:205: XMLParsedAsHTMLWarning: It looks like you're using an HTML parser to parse an XML document.
+
+Assuming this really is an XML document, what you're doing might work, but you should know that using an XML parser will be more reliable. To parse this document as XML, make sure you have the Python package 'lxml' installed, and pass the keyword argument `features="xml"` into the BeautifulSoup constructor.
+
+If you want or need to use an HTML parser on this document, you can make this warning go away by filtering it. To do that, run this code before calling the BeautifulSoup constructor:
+
+    from bs4 import XMLParsedAsHTMLWarning
+    import warnings
+
+    warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
+
+  soup = BeautifulSoup(response.content, 'lxml')
+╭─────────────────────────────── Content Found ────────────────────────────────╮
+│ AUDIO FILES: Head2Head Pinball                                               │
+│                                                                              │
+│ Found 101 audio files                                                        │
+│                                                                              │
+│ Preview:                                                                     │
+│   • Head2Head Pinball Podcast Episode 051                                    │
+│   • Head2Head Pinball Podcast Episode 078                                    │
+│   • Head2Head Pinball Podcast Episode 079                                    │
+│   • Head2Head Pinball Podcast Episode 080                                    │
+│   • Head2Head Pinball Podcast Episode 081                                    │
+│   ... and 96 more                                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ℹ Downloading 101 episodes to /Users/calsheimer/Desktop/content 
+archiver/podcasts/Head2Head_Pinball
+
+[1/101] Head2Head Pinball Podcast Episode 051
+  Head2Head Pinball Podcast Episode 051 ━━━━━━━━━━ 171.8/171.8 21.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 051
+
+[2/101] Head2Head Pinball Podcast Episode 078
+  Head2Head Pinball Podcast Episode 078 ━━━━━━━━━━ 92.1/92.1   23.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 078
+
+[3/101] Head2Head Pinball Podcast Episode 079
+  Head2Head Pinball Podcast Episode 079 ━━━━━━━━━━ 119.9/119.9 36.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 079
+
+[4/101] Head2Head Pinball Podcast Episode 080
+  Head2Head Pinball Podcast Episode 080 ━━━━━━━━━━ 93.3/93.3   42.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 080
+
+[5/101] Head2Head Pinball Podcast Episode 081
+  Head2Head Pinball Podcast Episode 081 ━━━━━━━━━━ 119.8/119.8 30.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 081
+
+[6/101] Head2Head Pinball Podcast Episode 082
+  Head2Head Pinball Podcast Episode 082 ━━━━━━━━━━ 125.7/125.7 53.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 082
+
+[7/101] Head2Head Pinball Podcast Episode 083
+  Head2Head Pinball Podcast Episode 083 ━━━━━━━━━━ 143.6/143.6 32.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 083
+
+[8/101] Head2Head Pinball Podcast Episode 084
+  Head2Head Pinball Podcast Episode 084 ━━━━━━━━━━ 88.6/88.6   28.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 084
+
+[9/101] Head2Head Pinball Podcast Episode 085
+  Head2Head Pinball Podcast Episode 085 ━━━━━━━━━━ 125.0/125.0 34.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 085
+
+[10/101] Head2Head Pinball Podcast Episode 086
+  Head2Head Pinball Podcast Episode 086 ━━━━━━━━━━ 104.2/104.2 29.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 086
+
+[11/101] Head2Head Pinball Podcast Episode 087
+  Head2Head Pinball Podcast Episode 087 ━━━━━━━━━━ 99.7/99.7   20.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 087
+
+[12/101] Head2Head Pinball Podcast Episode 088
+  Head2Head Pinball Podcast Episode 088 ━━━━━━━━━━ 117.7/117.7 25.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 088
+
+[13/101] Head2Head Pinball Podcast Episode 089
+  Head2Head Pinball Podcast Episode 089 ━━━━━━━━━━ 154.3/154.3 34.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 089
+
+[14/101] Head2Head Pinball Podcast Episode 090
+  Head2Head Pinball Podcast Episode 090 ━━━━━━━━━━ 116.5/116.5 23.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 090
+
+[15/101] Head2Head Pinball Podcast Episode 091
+  Head2Head Pinball Podcast Episode 091 ━━━━━━━━━━ 106.5/106.5 22.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 091
+
+[16/101] Head2Head Pinball Podcast Episode 092
+  Head2Head Pinball Podcast Episode 092 ━━━━━━━━━━ 62.0/62.0   23.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 092
+
+[17/101] Head2Head Pinball Podcast Episode 093
+  Head2Head Pinball Podcast Episode 093 ━━━━━━━━━━ 108.8/108.8 37.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 093
+
+[18/101] Head2Head Pinball Podcast Episode 094
+  Head2Head Pinball Podcast Episode 094 ━━━━━━━━━━ 122.8/122.8 19.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 094
+
+[19/101] Head2Head Pinball Podcast Episode 095
+  Head2Head Pinball Podcast Episode 095 ━━━━━━━━━━ 77.0/77.0   17.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 095
+
+[20/101] Head2Head Pinball Podcast Episode 096
+  Head2Head Pinball Podcast Episode 096 ━━━━━━━━━━ 151.2/151.2 28.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 096
+
+[21/101] Head2Head Pinball Podcast Episode 097
+  Head2Head Pinball Podcast Episode 097 ━━━━━━━━━━ 98.1/98.1   22.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 097
+
+[22/101] Head2Head Pinball Podcast Episode 098
+  Head2Head Pinball Podcast Episode 098 ━━━━━━━━━━ 78.5/78.5   19.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 098
+
+[23/101] Head2Head Pinball Podcast Episode 099
+  Head2Head Pinball Podcast Episode 099 ━━━━━━━━━━ 128.5/128.5 28.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 099
+
+[24/101] Head2Head Pinball Podcast Episode 100
+  Head2Head Pinball Podcast Episode 100 ━━━━━━━━━━ 113.1/113.1 27.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 100
+
+[25/101] Head2Head Pinball Podcast Episode 101
+  Head2Head Pinball Podcast Episode 101 ━━━━━━━━━━ 107.8/107.8 24.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 101
+
+[26/101] Head2Head Pinball Podcast Episode 102
+  Head2Head Pinball Podcast Episode 102 ━━━━━━━━━━ 105.7/105.7 25.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 102
+
+[27/101] Head2Head Pinball Podcast Episode 103
+  Head2Head Pinball Podcast Episode 103 ━━━━━━━━━━ 95.7/95.7   23.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 103
+
+[28/101] Head2Head Pinball Podcast Episode 104
+  Head2Head Pinball Podcast Episode 104 ━━━━━━━━━━ 99.7/99.7   22.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 104
+
+[29/101] Head2Head Pinball Podcast Episode 105
+  Head2Head Pinball Podcast Episode 105 ━━━━━━━━━━ 87.1/87.1   25.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 105
+
+[30/101] Head2Head Pinball Podcast Episode 106
+  Head2Head Pinball Podcast Episode 106 ━━━━━━━━━━ 102.4/102.4 49.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 106
+
+[31/101] Head2Head Pinball Podcast Episode 107
+  Head2Head Pinball Podcast Episode 107 ━━━━━━━━━━ 124.3/124.3 27.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 107
+
+[32/101] Head2Head Pinball Podcast Episode 108
+  Head2Head Pinball Podcast Episode 108 ━━━━━━━━━━ 93.9/93.9   15.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 108
+
+[33/101] Head2Head Pinball Podcast Episode 109
+  Head2Head Pinball Podcast Episode 109 ━━━━━━━━━━ 109.1/109.1 24.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 109
+
+[34/101] Head2Head Pinball Podcast Episode 110
+  Head2Head Pinball Podcast Episode 110 ━━━━━━━━━━ 125.9/125.9 26.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 110
+
+[35/101] Head2Head Pinball Podcast Episode 111
+  Head2Head Pinball Podcast Episode 111 ━━━━━━━━━━ 93.4/93.4   41.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 111
+
+[36/101] Head2Head Pinball Podcast Episode 112
+  Head2Head Pinball Podcast Episode 112 ━━━━━━━━━━ 68.7/68.7   43.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 112
+
+[37/101] Head2Head Pinball Podcast Episode 113
+  Head2Head Pinball Podcast Episode 113 ━━━━━━━━━━ 113.6/113.6 43.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 113
+
+[38/101] Head2Head Pinball Podcast Episode 114
+  Head2Head Pinball Podcast Episode 114 ━━━━━━━━━━ 109.7/109.7 40.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 114
+
+[39/101] Head2Head Pinball Podcast Episode 115
+  Head2Head Pinball Podcast Episode 115 ━━━━━━━━━━ 103.8/103.8 39.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 115
+
+[40/101] Head2Head Pinball Podcast Episode 116
+  Head2Head Pinball Podcast Episode 116 ━━━━━━━━━━ 115.7/115.7 26.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 116
+
+[41/101] Head2Head Pinball Podcast Episode 117
+  Head2Head Pinball Podcast Episode 117 ━━━━━━━━━━ 88.2/88.2   40.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 117
+
+[42/101] Head2Head Pinball Podcast Episode 118
+  Head2Head Pinball Podcast Episode 118 ━━━━━━━━━━ 109.2/109.2 37.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 118
+
+[43/101] Head2Head Pinball Podcast Episode 119
+  Head2Head Pinball Podcast Episode 119 ━━━━━━━━━━ 97.3/97.3   36.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 119
+
+[44/101] Head2Head Pinball Podcast Episode 120
+  Head2Head Pinball Podcast Episode 120 ━━━━━━━━━━ 92.5/92.5   47.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 120
+
+[45/101] Head2Head Pinball Podcast Episode 121
+  Head2Head Pinball Podcast Episode 121 ━━━━━━━━━━ 137.0/137.0 44.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 121
+
+[46/101] Head2Head Pinball Podcast Episode 122
+  Head2Head Pinball Podcast Episode 122 ━━━━━━━━━━ 174.0/174.0 43.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 122
+
+[47/101] Head2Head Pinball Podcast Episode 123
+  Head2Head Pinball Podcast Episode 123 ━━━━━━━━━━ 167.7/167.7 46.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 123
+
+[48/101] Head2Head Pinball Podcast Episode 124
+  Head2Head Pinball Podcast Episode 124 ━━━━━━━━━━ 152.5/152.5 50.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 124
+
+[49/101] Head2Head Pinball Podcast Episode 125
+  Head2Head Pinball Podcast Episode 125 ━━━━━━━━━━ 248.4/248.4 41.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 125
+
+[50/101] Head2Head Pinball Podcast Episode 126
+  Head2Head Pinball Podcast Episode 126 ━━━━━━━━━━ 141.4/141.4 36.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 126
+
+[51/101] Head2Head Pinball Podcast Episode 028
+  Head2Head Pinball Podcast Episode 028 ━━━━━━━━━━ 150.0/150.0 45.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 028
+
+[52/101] Head2Head Pinball Podcast Episode 029
+  Head2Head Pinball Podcast Episode 029 ━━━━━━━━━━ 122.8/122.8 39.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 029
+
+[53/101] Head2Head Pinball Podcast Episode 030
+  Head2Head Pinball Podcast Episode 030 ━━━━━━━━━━ 181.0/181.0 46.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 030
+
+[54/101] Head2Head Pinball Podcast Episode 031
+  Head2Head Pinball Podcast Episode 031 ━━━━━━━━━━ 135.7/135.7 31.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 031
+
+[55/101] Head2Head Pinball Podcast Episode 032
+  Head2Head Pinball Podcast Episode 032 ━━━━━━━━━━ 136.8/136.8 49.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 032
+
+[56/101] Head2Head Pinball Podcast Episode 033
+  Head2Head Pinball Podcast Episode 033 ━━━━━━━━━━ 110.9/110.9 45.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 033
+
+[57/101] Head2Head Pinball Podcast Episode 034
+  Head2Head Pinball Podcast Episode 034 ━━━━━━━━━━ 113.9/113.9 57.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 034
+
+[58/101] Head2Head Pinball Podcast Episode 035
+  Head2Head Pinball Podcast Episode 035 ━━━━━━━━━━ 119.2/119.2 46.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 035
+
+[59/101] Head2Head Pinball Podcast Episode 036a
+  Head2Head Pinball Podcast Episode 036a ━━━━━━━━━━ 110.1/110… 44.9 MB/s 0:00:00
+                                                    MB                          
+✓ Downloaded: Head2Head Pinball Podcast Episode 036a
+
+[60/101] Head2Head Pinball Podcast Episode 036b
+  Head2Head Pinball Podcast Episode 036b ━━━━━━━━━━ 72.4/72.4  54.0 MB/s 0:00:00
+                                                    MB                          
+✓ Downloaded: Head2Head Pinball Podcast Episode 036b
+
+[61/101] Head2Head Pinball Podcast Episode 037
+  Head2Head Pinball Podcast Episode 037 ━━━━━━━━━━ 127.2/127.2 34.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 037
+
+[62/101] Head2Head Pinball Podcast Episode 038
+  Head2Head Pinball Podcast Episode 038 ━━━━━━━━━━ 152.0/152.0 38.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 038
+
+[63/101] Head2Head Pinball Podcast Episode 039
+  Head2Head Pinball Podcast Episode 039 ━━━━━━━━━━ 121.8/121.8 46.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 039
+
+[64/101] Head2Head Pinball Podcast Episode 040
+  Head2Head Pinball Podcast Episode 040 ━━━━━━━━━━ 174.4/174.4 52.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 040
+
+[65/101] Head2Head Pinball Podcast Episode 041
+  Head2Head Pinball Podcast Episode 041 ━━━━━━━━━━ 171.8/171.8 42.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 041
+
+[66/101] Head2Head Pinball Podcast Episode 042
+  Head2Head Pinball Podcast Episode 042 ━━━━━━━━━━ 128.0/128.0 47.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 042
+
+[67/101] Head2Head Pinball Podcast Episode 043
+  Head2Head Pinball Podcast Episode 043 ━━━━━━━━━━ 147.0/147.0 42.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 043
+
+[68/101] Head2Head Pinball Podcast Episode 044
+  Head2Head Pinball Podcast Episode 044 ━━━━━━━━━━ 120.0/120.0 40.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 044
+
+[69/101] Head2Head Pinball Podcast Episode 045
+  Head2Head Pinball Podcast Episode 045 ━━━━━━━━━━ 141.9/141.9 46.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 045
+
+[70/101] Head2Head Pinball Podcast Episode 046
+  Head2Head Pinball Podcast Episode 046 ━━━━━━━━━━ 124.6/124.6 34.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 046
+
+[71/101] Head2Head Pinball Podcast Episode 047
+  Head2Head Pinball Podcast Episode 047 ━━━━━━━━━━ 149.6/149.6 46.2 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 047
+
+[72/101] Head2Head Pinball Podcast Episode 048
+  Head2Head Pinball Podcast Episode 048 ━━━━━━━━━━ 134.9/134.9 30.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 048
+
+[73/101] Head2Head Pinball Podcast Episode 049
+  Head2Head Pinball Podcast Episode 049 ━━━━━━━━━━ 119.3/119.3 50.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 049
+
+[74/101] Head2Head Pinball Podcast Episode 050
+  Head2Head Pinball Podcast Episode 050 ━━━━━━━━━━ 152.8/152.8 30.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 050
+
+[75/101] Head2Head Pinball Podcast Episode 052
+  Head2Head Pinball Podcast Episode 052 ━━━━━━━━━━ 163.2/163.2 48.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 052
+
+[76/101] Head2Head Pinball Podcast Episode 053
+  Head2Head Pinball Podcast Episode 053 ━━━━━━━━━━ 166.2/166.2 39.9 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 053
+
+[77/101] Head2Head Pinball Podcast Episode 054
+  Head2Head Pinball Podcast Episode 054 ━━━━━━━━━━ 137.6/137.6 31.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 054
+
+[78/101] Head2Head Pinball Podcast Episode 055
+  Head2Head Pinball Podcast Episode 055 ━━━━━━━━━━ 157.0/157.0 46.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 055
+
+[79/101] Head2Head Pinball Podcast Episode 056
+  Head2Head Pinball Podcast Episode 056 ━━━━━━━━━━ 155.2/155.2 41.6 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 056
+
+[80/101] Head2Head Pinball Podcast Episode 057
+  Head2Head Pinball Podcast Episode 057 ━━━━━━━━━━ 135.0/135.0 37.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 057
+
+[81/101] Head2Head Pinball Podcast Episode 058
+  Head2Head Pinball Podcast Episode 058 ━━━━━━━━━━ 156.5/156.5 45.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 058
+
+[82/101] Head2Head Pinball Podcast Episode 059
+  Head2Head Pinball Podcast Episode 059 ━━━━━━━━━━ 135.4/135.4 30.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 059
+
+[83/101] Head2Head Pinball Podcast Episode 060
+  Head2Head Pinball Podcast Episode 060 ━━━━━━━━━━ 106.1/106.1 47.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 060
+
+[84/101] Head2Head Pinball Podcast Episode 061
+  Head2Head Pinball Podcast Episode 061 ━━━━━━━━━━ 112.1/112.1 49.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 061
+
+[85/101] Head2Head Pinball Podcast Episode 062
+  Head2Head Pinball Podcast Episode 062 ━━━━━━━━━━ 131.9/131.9 35.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 062
+
+[86/101] Head2Head Pinball Podcast Episode 063
+  Head2Head Pinball Podcast Episode 063 ━━━━━━━━━━ 174.5/174.5 46.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 063
+
+[87/101] Head2Head Pinball Podcast Episode 064
+  Head2Head Pinball Podcast Episode 064 ━━━━━━━━━━ 176.4/176.4 39.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 064
+
+[88/101] Head2Head Pinball Podcast Episode 065
+  Head2Head Pinball Podcast Episode 065 ━━━━━━━━━━ 46.7/46.7   47.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 065
+
+[89/101] Head2Head Pinball Podcast Episode 066
+  Head2Head Pinball Podcast Episode 066 ━━━━━━━━━━ 124.6/124.6 43.1 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 066
+
+[90/101] Head2Head Pinball Podcast Episode 067
+  Head2Head Pinball Podcast Episode 067 ━━━━━━━━━━ 131.2/131.2 49.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 067
+
+[91/101] Head2Head Pinball Podcast Episode 068
+  Head2Head Pinball Podcast Episode 068 ━━━━━━━━━━ 101.4/101.4 51.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 068
+
+[92/101] Head2Head Pinball Podcast Episode 069
+  Head2Head Pinball Podcast Episode 069 ━━━━━━━━━━ 129.9/129.9 53.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 069
+
+[93/101] Head2Head Pinball Podcast Episode 070
+  Head2Head Pinball Podcast Episode 070 ━━━━━━━━━━ 118.7/118.7 47.5 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 070
+
+[94/101] Head2Head Pinball Podcast Episode 071
+  Head2Head Pinball Podcast Episode 071 ━━━━━━━━━━ 141.3/141.3 37.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 071
+
+[95/101] Head2Head Pinball Podcast Episode 072
+  Head2Head Pinball Podcast Episode 072 ━━━━━━━━━━ 147.0/147.0 45.0 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 072
+
+[96/101] Head2Head Pinball Podcast Episode 073
+  Head2Head Pinball Podcast Episode 073 ━━━━━━━━━━ 112.2/112.2 49.3 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 073
+
+[97/101] Head2Head Pinball Podcast Episode 074
+  Head2Head Pinball Podcast Episode 074 ━━━━━━━━━━ 88.6/88.6   48.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 074
+
+[98/101] Head2Head Pinball Podcast Episode 075
+  Head2Head Pinball Podcast Episode 075 ━━━━━━━━━━ 75.0/75.0   34.8 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 075
+
+[99/101] Head2Head Pinball Podcast Episode 076
+  Head2Head Pinball Podcast Episode 076 ━━━━━━━━━━ 175.6/175.6 40.7 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 076
+
+[100/101] Head2Head Pinball Podcast Episode 077
+  Head2Head Pinball Podcast Episode 077 ━━━━━━━━━━ 106.6/106.6 35.4 MB/s 0:00:00
+                                                   MB                           
+✓ Downloaded: Head2Head Pinball Podcast Episode 077
+
+[101/101] topcast 36
+  topcast 36 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 28.3/28.3 MB 39.7 MB/s 0:00:00
+✓ Downloaded: topcast 36
+✓ Podcast download complete: Head2Head Pinball

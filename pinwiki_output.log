@@ -1,0 +1,21 @@
+ℹ Mapping website URLs with Firecrawl...
+╭─────────────────────────────── Content Found ────────────────────────────────╮
+│ WEBSITE: www.pinwiki.com                                                     │
+│                                                                              │
+│ Found 101 pages                                                              │
+│                                                                              │
+│ Preview:                                                                     │
+│   • https://www.pinwiki.com/wiki/index.php/2026_Pinball_Show_Sch...          │
+│   • https://www.pinwiki.com/wiki/index.php/Motordome                         │
+│   • https://www.pinwiki.com/wiki/index.php/Leon_Borre_Bally_6803...          │
+│   • https://www.pinwiki.com/wiki/index.php/Big_Game                          │
+│   • https://www.pinwiki.com/wiki/index.php/History                           │
+│   ... and 96 more                                                            │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ℹ Archiving 101 pages to /Users/calsheimer/Desktop/content 
+archiver/websites/pinwiki.com
+ℹ Batch job started: 019bb96f-b771-70ae-90a9-ba53e1b158b9
+Progress: 0/101 pagesProgress: 0/101 pagesProgress: 5/101 pagesProgress: 49/101 pagesProgress: 76/101 pagesProgress: 101/101 pagesProgress: 101/101 pages
+✓ Site archive complete: pinwiki.com
+ℹ   - 100 pages saved
+ℹ   - Location: /Users/calsheimer/Desktop/content archiver/websites/pinwiki.com

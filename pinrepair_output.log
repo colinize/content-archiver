@@ -1,0 +1,23 @@
+ℹ Mapping website URLs with Firecrawl...
+ℹ Excluded 1 URLs matching: /topcast/
+╭─────────────────────────────── Content Found ────────────────────────────────╮
+│ WEBSITE: www.pinrepair.com                                                   │
+│                                                                              │
+│ Found 148 pages                                                              │
+│                                                                              │
+│ Preview:                                                                     │
+│   • https://www.pinrepair.com                                                │
+│   • https://www.pinrepair.com/gtb                                            │
+│   • http://www.pinrepair.com/baseball                                        │
+│   • https://www.pinrepair.com/sys37/s6swit.pdf                               │
+│   • http://www.pinrepair.com/rush                                            │
+│   ... and 143 more                                                           │
+╰──────────────────────────────────────────────────────────────────────────────╯
+ℹ Archiving 148 pages to /Users/calsheimer/Desktop/content 
+archiver/websites/pinrepair.com
+ℹ Batch job started: 019bb8ea-6504-75d8-a05c-f5bbfd0f1c09
+Progress: 0/148 pagesProgress: 0/147 pagesProgress: 8/147 pagesProgress: 30/147 pagesProgress: 50/146 pagesProgress: 68/145 pagesProgress: 92/145 pagesProgress: 111/145 pagesProgress: 127/145 pagesProgress: 129/145 pagesProgress: 134/145 pagesProgress: 134/145 pagesProgress: 135/145 pagesProgress: 136/145 pagesProgress: 139/145 pagesProgress: 140/145 pagesProgress: 140/145 pagesProgress: 140/145 pagesProgress: 140/145 pagesProgress: 141/145 pagesProgress: 141/145 pagesProgress: 142/145 pagesProgress: 142/145 pagesProgress: 142/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 143/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 144/145 pagesProgress: 145/145 pagesProgress: 145/145 pages
+✓ Site archive complete: pinrepair.com
+ℹ   - 100 pages saved
+ℹ   - Location: /Users/calsheimer/Desktop/content 
+archiver/websites/pinrepair.com
