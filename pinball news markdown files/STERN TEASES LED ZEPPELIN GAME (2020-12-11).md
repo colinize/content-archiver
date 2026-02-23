@@ -1,0 +1,19 @@
+---
+title: STERN TEASES LED ZEPPELIN GAME
+date: 2020-12-11
+url: https://www.pinballnews.com/site/2020/12/11/stern-teases-led-zeppelin-game
+source: Pinball News
+era: wordpress
+---
+
+* As we bid a warm welcome to 2026, there’s plenty to look back on in the pinball industry t…
+* November was quite a month in the pinball world with new game reveals, multiple special of…
+* Stern Pinball today revealed their latest game, The Walking Dead Remastered. This is the s…
+
+Load More Related Articles
+
+* As we bid a warm welcome to 2026, there’s plenty to look back on in the pinball industry t…
+* November was quite a month in the pinball world with new game reveals, multiple special of…
+* Hexa Pinball have rebranded their Space Hunt title to create a promotional machine for the…
+
+Load More By Pinball News
